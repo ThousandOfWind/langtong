@@ -15,13 +15,14 @@ class DNNAgent(nn.Module):
 
         self.encode = nn.Linear(self.input_len, self.hidden_dim)
         for i in range(self.hidden_layer):
-            setattr(self, 'fc_%s' % i, nn.Linear(self.hidden_dim, self.hidden_dim))
+            setattr(self, 'fc%s' % i, nn.Linear(self.hidden_dim, self.hidden_dim))
         self.decode = nn.Linear(self.hidden_dim, self.output_len)
 
 
     def forward(self, inputs):
+        # print(inputs.shape, self.input_len)
         x = F.relu(self.encode(inputs))
-        for i in range(self.hidden_layerh):
+        for i in range(self.hidden_layer):
             net = getattr(self, 'fc%s' % i, )
             x = F.relu(net(x))
         x = th.tanh(self.decode(x))

@@ -347,7 +347,7 @@ class Stage:
             state[0,index], state[1,index] = m.state()
         return state.reshape(-1)
 
-    def stage_sequantial_step(self, agents, memoryBuffer, clock, t, materials, show=False):
+    def stage_sequantial_step(self, agents, memoryBuffer, clock, t, materials, std_out_type, e=0):
         """
         :param agents:
         :return:
@@ -355,22 +355,27 @@ class Stage:
         for device in self.devices:
             stage_state = self.get_state()
             device_state, available_action = device.get_state(action_to_index=self.action_to_index, clock=clock, materials=materials)
-            state = np.concatenate([stage_state, device_state])
-            action_index = agents.choose_action(state = state, available_action=available_action, t=t, id= device.id)
+            obs = np.concatenate([stage_state, device_state])
+            action_index = agents.choose_action(obs=obs, available_action=available_action, t=t, id=device.id, episode=e)
             action = self.index_to_action[action_index]
             device.act(action, t, clock, materials)
             reward = device.get_reward() # 可补充其他奖赏逻辑
 
+            immediately_stage_state = self.get_state()
+            immediately_device_state, _ = device.get_state(action_to_index=self.action_to_index, clock=clock, materials=materials)
+            immediately_obs = np.concatenate([immediately_stage_state, immediately_device_state])
+
             experience = {
                 "id": device.id,
                 "step": t,
-                "state": state,
+                "obs": obs,
+                "immediately_obs": immediately_obs,
                 "available_action": available_action,
                 "action": action,
                 "action_index": action_index,
                 "reward": reward
             }
-            if show:
+            if std_out_type['device_action']:
                 print(t, ':', device.id, action['m_id'], action['o_id'], reward)
 
             memoryBuffer.append(experience)
@@ -378,9 +383,9 @@ class Stage:
 
     def info(self):
         env_info = {
-            'obs_shape': len(self.materials)*4,
-            'num_actions': len(self.index_to_action),
-            'num_agents': len(self.devices)
+            'obs_shape': (len(self.index_to_action)-1)*4,
+            'n_actions': len(self.index_to_action),
+            'n_agents': len(self.devices)
         }
         return env_info
 

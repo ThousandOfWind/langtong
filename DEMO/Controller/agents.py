@@ -12,14 +12,16 @@ class RL_Agents:
 
         return
 
-    def choose_action(self, state, available_action, episode):
+    def choose_action(self, obs, available_action, episode, **arg):
         if np.random.rand()  < self.schedule.eval(episode):
             prop = available_action / available_action.sum()
             action = np.random.choice(range(len(available_action)), p=prop)
         else:
-            q = self.learner.approximate_Q(state).clone()
-            q[available_action == 0] = -9999
-            action = q.argmax(dim=1)
+            device = th.device("cuda" if th.cuda.is_available() else "cpu")
+            q = self.learner.approximate_Q(obs).clone()
+            available_action = th.FloatTensor(available_action).to(device)
+            q[available_action==0] = -9999
+            action = q.argmax()
         return action
 
     def learn(self, memory, episode):

@@ -233,15 +233,21 @@ ZS = {
 }
 
 Artificial_STAGE_INIT = {
-    'HT': HT,
+    # 'HT': HT,
     'CL': CL,
     'JQJ': JQJ,
     'TS': TS,
     'ZS': ZS
 }
-Artificial_STAGE_name = ['HT', 'CL', 'JQJ', 'TS', 'ZS']
+# Artificial_STAGE_name = ['HT', 'CL', 'JQJ', 'TS', 'ZS']
+Artificial_STAGE_name = ['CL', 'JQJ', 'TS', 'ZS']
 Artificial_STAGE = {}
 for stage in Artificial_STAGE_name:
     stage_materials = {m_id: MATERIAL[m_id] for m_id in Artificial_STAGE_INIT[stage]['m_id']}
     Artificial_STAGE[stage] = Stage(name=stage, materials=stage_materials,
                          devices=[DEVICE[d_id] for d_id in Artificial_STAGE_INIT[stage]['d_id']])
+
+
+print('# all Artificial STAGE')
+for s_id in Artificial_STAGE_name:
+    print(Artificial_STAGE[s_id])

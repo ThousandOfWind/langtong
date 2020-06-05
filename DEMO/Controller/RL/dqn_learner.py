@@ -17,14 +17,10 @@ class QLearner:
     2. train
     """
     def __init__(self,param_set, writer):
-        self.n_action = param_set["n_actions"]
         self.obs_shape = param_set['obs_shape']
         self.gamma = param_set['gamma']
         self.learning_rate = param_set['learning_rate']
         self.grad_norm_clip = param_set['grad_norm_clip']
-
-        self.input_shape = self._get_input_shape()
-
 
         self.Q = DNN(param_set)
         if param_set['cuda']:
@@ -51,25 +47,23 @@ class QLearner:
         device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
         self.train_step += 1
-        reward = batch["reward"]
-        action = batch["action"]
-        done = batch["done"]
-        obs = batch["obs"]
-        next_obs = batch["next_obs"]
-        next_avail_action = batch['avail_action']
+        reward = th.FloatTensor(batch["reward"]).to(device)
+        action = th.LongTensor(batch["action"]).to(device)
+        done = th.FloatTensor(batch["done"]).to(device)
+        obs = th.FloatTensor(batch["obs"]).to(device)
+        next_obs = th.FloatTensor(batch["next_obs"]).to(device)
+        next_avail_action = th.FloatTensor(batch['next_avail_action']).to(device)
 
-        obs = th.FloatTensor(obs).to(device)
-        next_obs = th.FloatTensor(next_obs).to(device)
 
         q = self.Q(obs)
-        chosen_action_qvals = th.gather(q, dim=1, index=action)
+        chosen_action_qvals = th.gather(q, dim=1, index=action.unsqueeze(-1)).squeeze(-1)
 
         next_q = self.target_Q(next_obs)
         next_q[next_avail_action == 0] = -9999
         next_max_q, _ = next_q.max(dim=1)
 
         targets = (reward + self.gamma * (1 - done) * next_max_q).detach_()
-        loss = ((chosen_action_qvals - targets) ** 2).sum
+        loss = ((chosen_action_qvals - targets) ** 2).sum()
 
         self.writer.add_scalar('Loss/TD_loss', loss.item(), episode)
 
