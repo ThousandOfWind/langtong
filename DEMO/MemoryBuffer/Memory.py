@@ -40,17 +40,13 @@ class MemoryBuffer:
                 "reward": [experience['reward']]
             }
 
-    def get_batch(self, idList:[], batchSize:int):
+    def sample(self, idList:[], batchSize:int):
         return
 
-    def get_current(self, idList:[]):
-        return
 
     def add_reward(self, delta_reward):
         for device in self.current.keys():
-            self.current[device]["reward"] += delta_reward
-
-
+            self.current[device]["reward"][-1] += delta_reward
 
     def save_memory(self,index):
         id_list = []

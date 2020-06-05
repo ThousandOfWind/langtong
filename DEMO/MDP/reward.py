@@ -3,7 +3,7 @@
 """
 
 REWARD_RUlE = {
-    'wait': -0.1,
+    'wait': -0.01,
     'changeCraft': -1,
     'success': 10,
     'fail': -10

@@ -1,10 +1,10 @@
 from MDP.modules_v2 import Material, Craft, Device, Stage
 import pandas as pd
 import numpy as np
-device_pd=pd.read_csv('sample/device.csv',sep=',')  #    设备编号,班次
-craft_pd=pd.read_csv('sample/craft.csv',sep=',')  #  设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
-order_pd=pd.read_csv('sample/order.csv',sep=',')  # 订单编号        产品编号     产品量
-bom_pd=pd.read_csv('sample/bom.csv',sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+device_pd=pd.read_csv('data/sample/device.csv',sep=',')  #    设备编号,班次
+craft_pd=pd.read_csv('data/sample/craft.csv',sep=',')  #  设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+order_pd=pd.read_csv('data/sample/order.csv',sep=',')  # 订单编号        产品编号     产品量
+bom_pd=pd.read_csv('data/sample/bom.csv',sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
 
 MATERIAL = {}
 DEVICE = {}
@@ -40,9 +40,9 @@ for index, row in bom_pd.iterrows():
 
     o_id = row['销售订单行号']
     if o_id in M_INIT[m_id]['bom']:
-        M_INIT[m_id]['bom'][o_id].append((str(row['子件编码']), row['定额']))
+        M_INIT[m_id]['bom'][o_id].append([str(row['子件编码']), row['定额']])
     else:
-        M_INIT[m_id]['bom'][o_id] = [(str(row['子件编码']), row['定额']), ]
+        M_INIT[m_id]['bom'][o_id] = [[str(row['子件编码']), row['定额']], ]
 
 for m_id in M_INIT.keys():
     if M_INIT[m_id]['type']:
@@ -55,7 +55,7 @@ del M_INIT
 
 print('# all materials')
 for s in MATERIAL.keys():
-    print(MATERIAL[s])
+    print(s, MATERIAL[s])
 
 D_INIT = {}
 STAGE_U_D = {}
@@ -125,7 +125,7 @@ for index, row in order_pd.iterrows():
     o_id = row['订单编号']
     m_id = str(row['产品编号'])
     quatity = row['产品量']
-    orderML[o_id] = Material(id='order', type=True, bom=[(m_id, quatity)])
+    orderML[o_id] = Material(id='order', type=True, bom=[[m_id, quatity],])
 
 order_craft = Craft(d_id='order', m_id='order', target=(orderML, 1), changeTime=0)
 

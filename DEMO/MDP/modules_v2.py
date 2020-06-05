@@ -62,7 +62,7 @@ class Craft:
         self.m_id = m_id
         self.target_m = target[0]
         self.productivity = target[1]
-        self.source = {o_id:target[0][o_id].bom for o_id in target[0].keys()}
+        self.source = {o_id:list(target[0][o_id].bom) for o_id in target[0].keys()}
         self.changeTime = changeTime
 
     def __str__(self):
@@ -70,16 +70,20 @@ class Craft:
         s += 'produce:' + str(self.target_m.keys()) + '\n'
         return s
 
-    def state(self, time):
+    def get_state(self, time, materials):
         """
         :param time: 可运行时间
         :return: （real_productivity, refer_productivity）
         """
         ret = {}
         for o_id in self.source.keys():
-            for matrial, com in self.source[o_id]:
+            for s, com in self.source[o_id]:
+                if type(materials[s]) == dict:
+                    source = materials[s][o_id]
+                else:
+                    source = materials[s]
                 real_com = com * self.productivity
-                if real_com * time > matrial.remain:
+                if real_com * time > source.remain:
                     ret[o_id] = (self.productivity * DECISION_INTERVAL, 0, 0)
                     break
                 ret[o_id] = ([self.productivity * DECISION_INTERVAL, self.productivity * time, 1])
@@ -89,7 +93,10 @@ class Craft:
         target= self.target_m[action['o_id']]
         target.produce(time * self.productivity, self.d_id, time_step)
         for s_id, com in self.source[action['o_id']]:
-            source = materials[s_id]
+            if type(materials[s_id]) == dict:
+                source = materials[s_id][action['o_id']]
+            else:
+                source = materials[s_id]
             source.consume(time * com, self.d_id, time_step)
             source.add_demand_refer(time * com)
         return time * self.productivity
@@ -99,7 +106,10 @@ class Craft:
         for o_id in self.target_m.keys():
             for index, s in enumerate(self.source[o_id]):
                 if s[1] > 0:
-                    source = materials[o_id][s[0].id]
+                    if type(materials[s[0]])==dict:
+                        source = materials[s[0]][o_id]
+                    else:
+                        source = materials[s[0]]
                     consume = min(s[1], source.remain)
 
                     source.consume(consume, self.d_id, time_step)
@@ -140,6 +150,10 @@ class Device:
                 self.crafts[craft.target[0].id] = craft
         else:
             self.crafts = crafts
+        self.present_craft = 'wait'
+        self.last_craft = 'wait'
+        self.record = []
+
         self.operatingHours = operatingHours
         self.remainChangeTime = 0
         self.reward = 0
@@ -174,7 +188,7 @@ class Device:
             for o_id in self.crafts[m_id]:
                 self.production[m_id + o_id] = 0
 
-    def get_state(self, action_to_index, clock: int):
+    def get_state(self, action_to_index, clock: int, materials):
         """
         :param material_indexs: 本阶段产品
         :param clock: 时钟 0，1，2（早晚夜）
@@ -184,6 +198,7 @@ class Device:
         avail_action = np.zeros(len(action_to_index))
         avail_action[len(action_to_index)-1] = 1
 
+        Ctime = 0
         if self.present_craft == 'onChange':
             Ctime = min(self.remainChangeTime, DECISION_INTERVAL)
             self.remainChangeTime = max(0, self.remainChangeTime - DECISION_INTERVAL)
@@ -197,7 +212,7 @@ class Device:
                 else:
                     changeTime = self.crafts[self.last_craft].changeTime if self.present_craft == 'wait' else self.crafts[self.present_craft].changeTime
                     time = max(0, DECISION_INTERVAL - changeTime)
-            craft_state = self.crafts[m_id].get_state(time)
+            craft_state = self.crafts[m_id].get_state(time, materials)
             for o_id in craft_state:
                 index = action_to_index[m_id+o_id]
                 state[0, index] = craft_state[o_id][0]
@@ -223,10 +238,11 @@ class Device:
         self.accumulateReward += self.reward
         self.reward = 0
         if not self.operatingHours[clock]:
-
             self.record.append((time_step, 'close'))
             return
+
         if action['m_id'] == 'wait':
+            self.reward += REWARD_Function['wait'] * DECISION_INTERVAL
             self.last_craft = self.present_craft
             self.present_craft = 'wait'
             self.remainChangeTime = max(0, self.remainChangeTime - DECISION_INTERVAL)
@@ -243,6 +259,7 @@ class Device:
             else:
                 time = DECISION_INTERVAL - self.remainChangeTime
                 wait = self.remainChangeTime
+                self.reward += REWARD_Function['wait'] * wait
                 self.accumulateWaitTime += wait
                 self.remainChangeTime = 0
                 self.present_craft = action['m_id']
@@ -250,23 +267,25 @@ class Device:
         elif self.present_craft == action['m_id'] or (self.present_craft=='wait' and self.last_craft in ('wait', action['m_id'])):
             time = DECISION_INTERVAL
 
+
         else:
-            self.record.append((time_step, 'change'))
+            print(time_step, self.id, 'Change')
             self.last_craft = 'wait'
             changeTime = self.crafts[self.present_craft].changeTime
             self.changeCraft += 1
-
+            self.reward += REWARD_Function['changeCraft'] * changeTime
             if changeTime > DECISION_INTERVAL:
                 self.present_craft = 'onChange'
                 self.remainChangeTime = changeTime - DECISION_INTERVAL
-                self.reward += REWARD_Function['wait']
+                self.reward += REWARD_Function['wait'] * DECISION_INTERVAL
                 self.accumulateWaitTime += DECISION_INTERVAL
                 return
             else:
                 self.present_craft = action['m_id']
                 time = DECISION_INTERVAL - changeTime
+                self.reward += REWARD_Function['wait'] * changeTime
                 self.accumulateWaitTime += changeTime
-        self.record.append((time_step, action['m_id'], action['o_id']))
+        self.record.append((time_step, action['m_id'], action['o_id'], self.reward))
         productivity =  self.crafts[action['m_id']].act(action, time, time_step, materials)
         self.production[action['m_id']+ action['o_id']] += productivity
 
@@ -284,22 +303,24 @@ class Stage:
         self.name=name
         self.materials = materials
         self.devices = devices
-        self.index_to_action = {}
+        self.index_to_action = []
         self.action_to_index = {}
 
         count = 0
         for m_id in materials.keys():
             for o_id in materials[m_id].keys():
-                self.index_to_action[count] = {
+                ita = {
                     'm_id': m_id,
                     'o_id': o_id
                 }
+                self.index_to_action.append(ita)
                 self.action_to_index[m_id+o_id] = count
                 count += 1
-        self.index_to_action[count] = {
+        ita = {
             'm_id': 'wait',
             'o_id': ''
         }
+        self.index_to_action.append(ita)
         self.action_to_index['wait'] = count
 
 
@@ -309,27 +330,31 @@ class Stage:
         s += 'Stage device:' + str([d.id for d in self.devices]) + '\n'
         return s
 
-    def set_demand(self):
+    def set_demand(self, materials):
         for action in self.index_to_action[:-1]:
-            m = self.materials[self.index_to_action[action]['m_id']][self.index_to_action[action['o_id']]]
+            m = self.materials[action['m_id']][action['o_id']]
             for s, c in m.bom:
-                s.add_demand(c * m.demand)
+                if type(materials[s]) == dict:
+                    source = materials[s][action['o_id']]
+                else:
+                    source = materials[s]
+                source.add_demand(c * m.demand)
 
     def get_state(self):
         state = np.zeros((2,len(self.index_to_action)-1))
-        for action in self.index_to_action[:-1]:
-            m = self.materials[self.index_to_action[action]['m_id']][self.index_to_action[action['o_id']]]
-            state[0,action], state[1,action] = m.state()
+        for index, action in enumerate(self.index_to_action[:-1]):
+            m = self.materials[action['m_id']][action['o_id']]
+            state[0,index], state[1,index] = m.state()
         return state.reshape(-1)
 
-    def stage_sequantial_step(self, agents, memoryBuffer, clock, t, materials):
+    def stage_sequantial_step(self, agents, memoryBuffer, clock, t, materials, show=False):
         """
         :param agents:
         :return:
         """
         for device in self.devices:
             stage_state = self.get_state()
-            device_state, available_action = device.get_state(material_indexs=self.index_to_action, clock=clock)
+            device_state, available_action = device.get_state(action_to_index=self.action_to_index, clock=clock, materials=materials)
             state = np.concatenate([stage_state, device_state])
             action_index = agents.choose_action(state = state, available_action=available_action, t=t, id= device.id)
             action = self.index_to_action[action_index]
@@ -345,12 +370,15 @@ class Stage:
                 "action_index": action_index,
                 "reward": reward
             }
+            if show:
+                print(t, ':', device.id, action['m_id'], action['o_id'], reward)
+
             memoryBuffer.append(experience)
 
 
     def info(self):
         env_info = {
-            'state_len': len(self.materials)*4,
+            'obs_shape': len(self.materials)*4,
             'num_actions': len(self.index_to_action),
             'num_agents': len(self.devices)
         }
