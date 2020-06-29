@@ -9,7 +9,10 @@ class DNNAgent(nn.Module):
         self.param_set = param_set
 
         self.hidden_dim = param_set['hidden_dim']
-        self.input_len = param_set['obs_shape']
+        if param_set['ob_style'] == 'primitive':
+            self.input_len = param_set['obs_shape']
+        elif param_set['ob_style'] == 'concat':
+            self.input_len = param_set['obs_shape'] * 2
         self.output_len = param_set['n_actions']
         self.hidden_layer = param_set['hidden_layer']
 

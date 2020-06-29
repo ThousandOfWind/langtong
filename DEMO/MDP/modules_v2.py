@@ -1,8 +1,10 @@
 import numpy as np
-from .reward import REWARD_RUlE
+import copy
+import csv
+
 
 DECISION_INTERVAL = 60
-REWARD_Function = REWARD_RUlE
+
 
 
 class Material:
@@ -24,16 +26,48 @@ class Material:
         self.record = []
         self.bom = bom
 
+        self.init_remain = remain
+        self.init_bom = copy.deepcopy(bom)
+
+
+    def reset(self):
+        self.product_refer = 0
+        self.demand = 0
+        self.demand_refer = 0
+        self.last_demand_refer = 0
+        self.record = []
+
+        self.remain = self.init_remain
+        self.bom = copy.deepcopy(self.init_bom)
+
+
     def __str__(self):
-        s = 'Material ' + self.id + ' remain ' + str(self.remain) + ' demand ' + str(self.demand)
+        s = 'Material:' + self.id + ' remain ' + str(self.remain) + ' demand ' + str(self.demand) \
+            + ' this step produce' + str(self.product_refer) + ' last step conmsume ' + str(self.last_demand_refer)
         return s
 
-    def produce(self, delta: int, id, ts):
+    def produce(self, delta: int, id, ts, std_out_type):
+        if std_out_type['matrial']:
+            print('\t', 'produce from', str(self))
+
         self.product_refer += delta
+
+        if std_out_type['matrial']:
+            print('\t', '\t to', str(self))
         self.record.append((ts, id, delta))
 
-    def consume(self, delta: int, id, ts):
+    def consume(self, delta: int, id, ts, std_out_type):
+        if std_out_type['matrial']:
+            print('\t', 'consume from', str(self))
+
+        if delta > self.remain:
+            print(ts, id, -delta, str(self))
+
         self.remain -= delta
+
+        if std_out_type['matrial']:
+            print('\t', '\t to', str(self))
+
         self.record.append((ts, id, -delta))
 
 
@@ -45,11 +79,11 @@ class Material:
 
     def clear(self):
         self.remain += self.product_refer
-        self.last_demand_refer = self.last_demand_refer
+        self.last_demand_refer = self.demand_refer
         self.demand = self.demand_refer = self.product_refer = 0
 
     def state(self):
-        return [self.demand-self.remain, self.last_demand_refer-self.product_refer]
+        return [self.demand - self.remain - self.product_refer, self.last_demand_refer-self.product_refer]
 
 class Craft:
     def __init__(self, d_id: str, m_id: str, target, changeTime: int):
@@ -62,12 +96,18 @@ class Craft:
         self.m_id = m_id
         self.target_m = target[0]
         self.productivity = target[1]
-        self.source = {o_id:list(target[0][o_id].bom) for o_id in target[0].keys()}
+        self.source = {o_id:list(self.target_m[o_id].bom) for o_id in self.target_m.keys()}
         self.changeTime = changeTime
 
+    def reset(self):
+        self.source = {o_id:list(self.target_m[o_id].bom) for o_id in self.target_m.keys()}
+
     def __str__(self):
-        s = 'Craft of ' + self.d_id + ' productivity:' + str(self.productivity) + ' changeTime:' + str(self.changeTime) +'\n'
-        s += 'produce:' + str(self.target_m.keys()) + '\n'
+        # s = 'Craft of ' + self.d_id + ' productivity:' + str(self.productivity) + ' changeTime:' + str(self.changeTime)
+        # s += 'produce:' + str(self.target_m.keys()) + '\n'
+
+        s = 'Craft of ' + self.d_id + ' produce ' + str(self.productivity) + ' ' + str(self.target_m.keys()) + ' by \n \t' \
+            + ';'.join([o_id + ':' + self.source[o_id][0][0] + ' ' + str(self.source[o_id][0][1])   for o_id in self.source])
         return s
 
     def get_state(self, time, materials):
@@ -89,19 +129,24 @@ class Craft:
                 ret[o_id] = ([self.productivity * DECISION_INTERVAL, self.productivity * time, 1])
         return ret
 
-    def act(self, action, time, time_step, materials):
+
+
+    def act(self, action, time, time_step, materials, std_out_type):
+        if std_out_type['matrial']:
+            print(self.d_id, 'act', self.m_id, action['o_id'])
         target= self.target_m[action['o_id']]
-        target.produce(time * self.productivity, self.d_id, time_step)
+        target.produce(time * self.productivity, self.d_id, time_step, std_out_type)
+
         for s_id, com in self.source[action['o_id']]:
             if type(materials[s_id]) == dict:
                 source = materials[s_id][action['o_id']]
             else:
                 source = materials[s_id]
-            source.consume(time * com, self.d_id, time_step)
-            source.add_demand_refer(time * com)
+            source.consume(time * com * self.productivity, self.d_id, time_step, std_out_type)
+            source.add_demand_refer(time * com * self.productivity)
         return time * self.productivity
 
-    def order_act(self, time_step, materials):
+    def order_act(self, time_step, materials, std_out_type):
         flag = True
         for o_id in self.target_m.keys():
             for index, s in enumerate(self.source[o_id]):
@@ -112,12 +157,11 @@ class Craft:
                         source = materials[s[0]]
                     consume = min(s[1], source.remain)
 
-                    source.consume(consume, self.d_id, time_step)
+                    source.consume(consume, self.d_id, time_step, std_out_type)
                     self.source[o_id][index][1] -= consume
                     source.add_demand_refer(consume)
-                    if self.source[o_id][index][1] >= 0:
+                    if self.source[o_id][index][1] > 0:
                         flag = False
-                    else:
                         source.add_demand(self.source[o_id][index][1])
         return flag
 
@@ -165,14 +209,11 @@ class Device:
             for o_id in self.crafts[m_id].target_m:
                 self.production[m_id + o_id] = 0
 
-    def __str__(self):
-        s = '-----Device ID:' + self.id + '-----\n'
-        s += 'current action ' + str(self.present_craft) + '\n'
-        s += 'total reward ' + str(self.accumulateReward) + '\n'
-        s += 'have produced:' + str([key +':' + str(self.production[key]) for key in self.production.keys()]) + '\n'
-        s += 'have waited:' + str(self.accumulateWaitTime)
-        s += '\thave changed:' + str(self.changeCraft)
-        return s
+    def save(self, path):
+        with open(path + str(self.id) + '_history.csv', 'w', newline ='') as f:
+            writer = csv.writer(f)
+            writer.writerows(self.record)
+        return
 
     def reset(self):
         self.present_craft = 'wait'
@@ -181,12 +222,21 @@ class Device:
         self.reward = 0
         self.accumulateReward = 0
         self.accumulateWaitTime = 0
-        self.record = []
         self.changeCraft = 0
+        self.record = []
         self.production = {}
         for m_id in self.crafts.keys():
-            for o_id in self.crafts[m_id]:
+            for o_id in self.crafts[m_id].target_m:
                 self.production[m_id + o_id] = 0
+
+    def __str__(self):
+        s = '-----Device ID:' + self.id + '-----\n'
+        s += 'current action ' + str(self.present_craft) + '\n'
+        s += 'total reward ' + str(self.accumulateReward) + '\n'
+        s += 'have produced:' + str([key +':' + str(self.production[key]) for key in self.production.keys()]) + '\n'
+        s += 'have waited:' + str(self.accumulateWaitTime)
+        s += '\thave changed:' + str(self.changeCraft)
+        return s
 
     def get_state(self, action_to_index, clock: int, materials):
         """
@@ -223,14 +273,22 @@ class Device:
         if not self.operatingHours[clock] or Ctime==DECISION_INTERVAL:
             state[1,:] = 0
             avail_action = np.zeros(len(action_to_index))
-        avail_action[len(action_to_index) - 1] = 1
 
+        avail_action[len(action_to_index) - 1] = 1
         return state.reshape(-1), avail_action
 
     def get_reward(self):
         return self.reward
 
-    def act(self, action, time_step, clock, materials):
+    def add_reward(self, delta):
+        self.reward += delta
+
+    def check_action(self, action_to_index, clock: int, materials, action):
+        _, avail = self.get_state(action_to_index, clock, materials)
+        index = action_to_index[action['m_id'] + action['o_id']]
+        print(avail, index, avail[index])
+
+    def act_with_time(self, time, action, time_step, clock, materials, reward_rule, std_out_type):
         """
         :param action:
         :return: wait_time if change_craft
@@ -238,28 +296,99 @@ class Device:
         self.accumulateReward += self.reward
         self.reward = 0
         if not self.operatingHours[clock]:
-            self.record.append((time_step, 'close'))
+            self.record.append([time_step, 'close'])
             return
 
         if action['m_id'] == 'wait':
-            self.reward += REWARD_Function['wait'] * DECISION_INTERVAL
+            self.reward += reward_rule['wait'] * time
+            self.last_craft = self.present_craft
+            self.present_craft = 'wait'
+            self.remainChangeTime = max(0, self.remainChangeTime - time)
+            self.accumulateWaitTime += time
+            self.record.append([time_step,'wait'])
+            return
+
+        # self.check_action(action_to_index, clock, materials, action)
+
+
+        if self.present_craft == 'onChange':
+            if self.remainChangeTime >= time:
+                self.remainChangeTime -= time
+                self.reward += reward_rule['wait'] * time
+                self.record.append([time_step, 'change'])
+                return
+            else:
+                time = time - self.remainChangeTime
+                wait = self.remainChangeTime
+                self.reward += reward_rule['wait'] * wait
+                self.accumulateWaitTime += wait
+                self.remainChangeTime = 0
+                self.present_craft = action['m_id']
+
+        elif self.present_craft == action['m_id'] or (self.present_craft=='wait' and self.last_craft in ('wait', action['m_id'])):
+            time = time
+
+
+        else:
+            print(time_step, self.id, 'Change')
+            self.last_craft = 'wait'
+            changeTime = self.crafts[self.present_craft].changeTime
+            self.changeCraft += 1
+            self.reward += reward_rule['changeCraft'] * changeTime
+            if changeTime > time:
+                self.present_craft = 'onChange'
+                self.remainChangeTime = changeTime - time
+                self.reward += reward_rule['wait'] * time
+                self.accumulateWaitTime += time
+                return
+            else:
+                self.present_craft = action['m_id']
+                time = time - changeTime
+                self.reward += reward_rule['wait'] * changeTime
+                self.accumulateWaitTime += changeTime
+        productivity =  self.crafts[action['m_id']].act(action, time, time_step, materials, std_out_type)
+        self.production[action['m_id']+ action['o_id']] += productivity
+        self.record.append([time_step, action['m_id'], action['o_id'], productivity])
+
+
+        # self.reward += reward_rule[action] * productivity
+        return
+
+
+
+    def act(self, action_to_index, action, time_step, clock, materials, reward_rule, std_out_type):
+        """
+        :param action:
+        :return: wait_time if change_craft
+        """
+        self.accumulateReward += self.reward
+        self.reward = 0
+        if not self.operatingHours[clock]:
+            self.record.append([time_step, 'close'])
+            return
+
+        if action['m_id'] == 'wait':
+            self.reward += reward_rule['wait'] * DECISION_INTERVAL
             self.last_craft = self.present_craft
             self.present_craft = 'wait'
             self.remainChangeTime = max(0, self.remainChangeTime - DECISION_INTERVAL)
             self.accumulateWaitTime += DECISION_INTERVAL
-            self.record.append((time_step,'wait'))
+            self.record.append([time_step,'wait'])
             return
+
+        # self.check_action(action_to_index, clock, materials, action)
+
 
         if self.present_craft == 'onChange':
             if self.remainChangeTime >= DECISION_INTERVAL:
                 self.remainChangeTime -= DECISION_INTERVAL
-                self.reward += REWARD_Function['wait'] * DECISION_INTERVAL
-                self.record.append((time_step, 'change'))
+                self.reward += reward_rule['wait'] * DECISION_INTERVAL
+                self.record.append([time_step, 'change'])
                 return
             else:
                 time = DECISION_INTERVAL - self.remainChangeTime
                 wait = self.remainChangeTime
-                self.reward += REWARD_Function['wait'] * wait
+                self.reward += reward_rule['wait'] * wait
                 self.accumulateWaitTime += wait
                 self.remainChangeTime = 0
                 self.present_craft = action['m_id']
@@ -273,23 +402,24 @@ class Device:
             self.last_craft = 'wait'
             changeTime = self.crafts[self.present_craft].changeTime
             self.changeCraft += 1
-            self.reward += REWARD_Function['changeCraft'] * changeTime
+            self.reward += reward_rule['changeCraft'] * changeTime
             if changeTime > DECISION_INTERVAL:
                 self.present_craft = 'onChange'
                 self.remainChangeTime = changeTime - DECISION_INTERVAL
-                self.reward += REWARD_Function['wait'] * DECISION_INTERVAL
+                self.reward += reward_rule['wait'] * DECISION_INTERVAL
                 self.accumulateWaitTime += DECISION_INTERVAL
                 return
             else:
                 self.present_craft = action['m_id']
                 time = DECISION_INTERVAL - changeTime
-                self.reward += REWARD_Function['wait'] * changeTime
+                self.reward += reward_rule['wait'] * changeTime
                 self.accumulateWaitTime += changeTime
-        self.record.append((time_step, action['m_id'], action['o_id'], self.reward))
-        productivity =  self.crafts[action['m_id']].act(action, time, time_step, materials)
+        productivity =  self.crafts[action['m_id']].act(action, time, time_step, materials, std_out_type)
         self.production[action['m_id']+ action['o_id']] += productivity
+        self.record.append([time_step, action['m_id'], action['o_id'], productivity])
 
-        # self.reward += REWARD_Function[action] * productivity
+
+        # self.reward += reward_rule[action] * productivity
         return
 
 class Stage:
@@ -347,7 +477,7 @@ class Stage:
             state[0,index], state[1,index] = m.state()
         return state.reshape(-1)
 
-    def stage_sequantial_step(self, agents, memoryBuffer, clock, t, materials, std_out_type, e=0):
+    def stage_sequantial_step(self, agents, memoryBuffer, clock, t, materials, std_out_type, reward_rule, e=0):
         """
         :param agents:
         :return:
@@ -356,10 +486,18 @@ class Stage:
             stage_state = self.get_state()
             device_state, available_action = device.get_state(action_to_index=self.action_to_index, clock=clock, materials=materials)
             obs = np.concatenate([stage_state, device_state])
-            action_index = agents.choose_action(obs=obs, available_action=available_action, t=t, id=device.id, episode=e)
+            action_index = agents.choose_action(obs=obs, available_action=available_action, t=t, d_id=device.id, episode=e, std_out_type=std_out_type, memory=memoryBuffer)
             action = self.index_to_action[action_index]
-            device.act(action, t, clock, materials)
-            reward = device.get_reward() # 可补充其他奖赏逻辑
+            device.act(self.action_to_index, action, t, clock, materials, reward_rule, std_out_type)
+
+            # 补充其他奖赏逻辑
+            device.add_reward(reward_rule['step'])
+            if action['m_id'] == 'wait':
+                reward = device.get_reward()
+            else:
+                mnr = reward_rule['meet_need'] if stage_state[action_index]>0 else 0
+                device.add_reward(mnr)
+                reward = device.get_reward()
 
             immediately_stage_state = self.get_state()
             immediately_device_state, _ = device.get_state(action_to_index=self.action_to_index, clock=clock, materials=materials)

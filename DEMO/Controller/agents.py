@@ -1,27 +1,36 @@
 import numpy as np
 import torch as th
 from .RL.dqn_learner import QLearner
+from .RL.MF_learner_Counterparts import QLearner as MFLearner
+
 from .RL.epsilon_schedules import DecayThenFlatSchedule
 class RL_Agents:
-    def __init__(self, param_set, agent_id_list, writer):
+    def __init__(self, param_set, agent_id_list, writer, name):
         self.agent_id_list =agent_id_list
         self.batchSize = param_set['batch_size']
-        self.learner = QLearner(param_set, writer=writer)
+        self.learner = QLearner(param_set, writer=writer, name=name)
         self.schedule = DecayThenFlatSchedule(start=param_set['epsilon_start'], finish=param_set['epsilon_end'],
                                               time_length=param_set['time_length'], decay="linear")
 
         return
 
-    def choose_action(self, obs, available_action, episode, **arg):
+    def choose_action(self, obs, available_action, episode, std_out_type, memory, d_id, **arg):
         if np.random.rand()  < self.schedule.eval(episode):
             prop = available_action / available_action.sum()
             action = np.random.choice(range(len(available_action)), p=prop)
+            if std_out_type['Q']:
+                print('random', available_action, prop, action)
         else:
             device = th.device("cuda" if th.cuda.is_available() else "cpu")
-            q = self.learner.approximate_Q(obs).clone()
+            flag, lio = memory.get_current(d_id, 'immediately_obs')
+            if not flag:
+                lio = obs
+            q = self.learner.approximate_Q(obs, lio).clone().squeeze()
             available_action = th.FloatTensor(available_action).to(device)
             q[available_action==0] = -9999
             action = q.argmax()
+            if std_out_type['Q']:
+                print('Q',q, action)
         return action
 
     def learn(self, memory, episode):
@@ -33,17 +42,67 @@ class RL_Agents:
         batch = memory.sample(self.agent_id_list, self.batchSize)
         self.learner.train(batch=batch, episode=episode)
 
+class MF_Agents:
+    def __init__(self, param_set, agent_id_list, writer, map, name):
+        self.agent_id_list =agent_id_list
+        self.batchSize = param_set['batch_size']
+        self.learner = MFLearner(param_set, writer=writer, name=name)
+        self.schedule = DecayThenFlatSchedule(start=param_set['epsilon_start'], finish=param_set['epsilon_end'],
+                                              time_length=param_set['time_length'], decay="linear")
+        self.map = map
+
+        return
+
+    def choose_action(self, obs, available_action, episode, std_out_type, memory, d_id, **arg):
+        if np.random.rand()  < self.schedule.eval(episode):
+            prop = available_action / available_action.sum()
+            action = np.random.choice(range(len(available_action)), p=prop)
+            if std_out_type['Q']:
+                print('random', available_action, prop, action)
+        else:
+            device = th.device("cuda" if th.cuda.is_available() else "cpu")
+            flag, lma = memory.get_current(d_id, 'last_mean_action', self.map)
+            if not flag:
+
+            q = self.learner.approximate_Q(obs, lma).clone().squeeze()
+            available_action = th.FloatTensor(available_action).to(device)
+            q[available_action==0] = -9999
+            action = q.argmax()
+            if std_out_type['Q']:
+                print('Q',q, action)
+        return action
+
+    def learn(self, memory, episode):
+        """
+        :param memory:
+        :param episode:
+        :return:
+        """
+        batch = memory.sample(self.agent_id_list, self.batchSize, mf=True, map=self.map)
+        self.learner.train(batch=batch, episode=episode)
+
 
 class AM_Agents:
     def __init__(self, am):
         self.am = am
         return
 
-    def choose_action(self, id, t, **arg):
-        return self.get_action_from_art(id, t)
+    def choose_action(self, d_id, t, **arg):
+        return self.get_action_from_art(d_id, t)
 
-    def get_action_from_art(self, id, t):
-        return self.am[id][t]
+    def get_action_from_art(self, d_id, t):
+        return self.am[d_id][t]
+
+class Planner_Agents:
+    def __init__(self, am):
+        self.am = am
+        return
+
+    def choose_action(self, d_id, t, **arg):
+        return self.get_action_from_art(d_id, t)
+
+    def get_action_from_art(self, d_id, t):
+        return self.am[d_id][t]
 
 
 class Random_Agents:
@@ -58,7 +117,7 @@ class Random_Agents:
 
 
 
-def init_Agents(param_set, agent_id_list=None, writer=None):
+def init_Agents(param_set, agent_id_list=None, writer=None, map=None, name=None):
     """
     :param stage_info:
     :return:  [Agents] / Agents
@@ -69,5 +128,7 @@ def init_Agents(param_set, agent_id_list=None, writer=None):
     if agentType=='AM':
         return AM_Agents(param_set)
     if agentType == 'RL':
-        return RL_Agents(param_set, agent_id_list, writer)
+        return RL_Agents(param_set, agent_id_list, writer, name)
+    if agentType == 'MF':
+        return MF_Agents(param_set, agent_id_list, writer, map, name)
     return

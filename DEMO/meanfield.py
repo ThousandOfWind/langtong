@@ -7,6 +7,7 @@ import numpy as np
 
 from MDP.modules_v2 import DECISION_INTERVAL
 from data.read import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, generate_virtual_order
+from data.create_map import Equipment_Relation_Map
 from Controller.agents import init_Agents
 from MemoryBuffer.Memory import MemoryBuffer
 from MDP.reward import REWARD_RUlE
@@ -17,7 +18,7 @@ parser.add_argument("--cuda", action="store_true", help="Use cuda?")
 parser.add_argument("--gpus", default="2", type=str, help="gpu ids (default: 2)")
 parser.add_argument("--nEpochs", type=int, default=1, help="Number of epochs to train for")
 parser.add_argument("--nEpisode", type=int, default=5000000, help="Number of epochs to train for")
-parser.add_argument("--agentType", default="RL", type=str, help="agentType")
+parser.add_argument("--agentType", default="MF", type=str, help="agentType")
 parser.add_argument("--rewardType", default="mnp", type=str, help="rewardType")
 parser.add_argument('--pretrained', default='', type=str, help='path to pretrained model (default: none)')
 parser.add_argument("--mamorySize", type=int, default=1000, help="mamorySize")
@@ -30,10 +31,10 @@ parser.add_argument("--gamma", type=float, default=0.99, help="GAMMA. Default=0.
 parser.add_argument("--tui", type=int, default=200, help="target update interval. Default=200")
 parser.add_argument("--delay", type=int, default=1, help="extend time for product. Default=2")
 parser.add_argument("--hiddenDim", type=int, default=64, help="hidden dim of network. Default=64")
+parser.add_argument("--obs_hidden_dim", type=int, default=64, help="hidden dim of network. Default=64")
+parser.add_argument("--action_hidden_dim", type=int, default=32, help="hidden dim of network. Default=64")
 parser.add_argument("--hiddenLay", type=int, default=2, help="hidden layer of network. Default=2")
-parser.add_argument("--fakeOBR", type=float, default=0.5, help="fake order boost ratio")
-parser.add_argument("--fakeOBTL", type=int, default=500, help="fake order boost time_length")
-parser.add_argument("--fakeStyle", type=str, default='linear', help="fix / linear")
+
 parser.add_argument("--obStyle", type=str, default='primitive', help="primitive, concat, lstm")
 
 
@@ -72,7 +73,6 @@ def episode(memoryBuffer, all_agents,e,std_out_type, writer, reward_rule, delay,
 
         for s_id in STAGE_name:
             STAGE[s_id].set_demand(MATERIAL)
-
         for s_id in Artificial_STAGE_name:
             Artificial_STAGE[s_id].stage_sequantial_step(agents=all_agents[s_id], memoryBuffer=memoryBuffer, clock=p,
                                                          t=t, materials=MATERIAL, e=e,std_out_type=std_out_type, reward_rule=reward_rule)
@@ -133,7 +133,7 @@ def run(param_set):
         param['path'] = 'model' + path + stage_id + '/'
         param.update(Artificial_STAGE[stage_id].info())
         agent_id_list = [d.id for d in Artificial_STAGE[stage_id].devices]
-        agents = init_Agents(param_set=param, agent_id_list=agent_id_list, writer=writer, name=stage_id)
+        agents = init_Agents(param_set=param, agent_id_list=agent_id_list, writer=writer, name=stage_id, map=Equipment_Relation_Map)
         all_agents[stage_id] = agents
 
 
@@ -143,15 +143,8 @@ def run(param_set):
         os.makedirs(result_path)
 
     for e in range(param_set['n_episodes']):
-        if e < param_set['FOBTL'] and random.random() < param_set['FOBR']:
-            is_target = False
-            if param_set['FOBStyle'] == 'fix':
-                om, oc = generate_virtual_order(param_set['FOBfix_at'])
-            else:
-                om, oc = generate_virtual_order(e/param_set['FOBTL'])
-        else:
-            om, oc = get_oder()
-            is_target = True
+        om, oc = get_oder()
+        is_target = True
 
         this_t, final_rew = episode(memoryBuffer=memoryBuffer, all_agents=all_agents, e=e, std_out_type=std_out_type,
                             writer=writer, reward_rule=reward_rule, delay=delay, oc=oc, is_target=is_target)
@@ -221,27 +214,21 @@ if __name__ == '__main__':
     param_set['hidden_layer'] = opt.hiddenLay
     param_set['delay'] = opt.delay
     param_set['reward_Type'] = opt.rewardType
+    param_set['obs_hidden_dim'] = opt.obs_hidden_dim
+    param_set['action_hidden_dim'] = opt.action_hidden_dim
 
-    param_set['FOBR'] = opt.fakeOBR
-    param_set['FOBTL'] = opt.fakeOBTL
-    param_set['FOBStyle'] = opt.fakeStyle
-    param_set['FOBfix_at'] = 0.3
-    if param_set['FOBStyle'] == 'fix':
-        str_fob = '/FOBR' + str(param_set['FOBR'])[2:] + '-TL' + str(param_set['FOBTL']) +  '-f' + str(param_set['FOBfix_at'])[2:]
-    else:
-        str_fob = '/FOBR' + str(param_set['FOBR'])[2:] + '-TL' + str(param_set['FOBTL']) +  '-linear'
 
     # 'primitive', 'concat', 'lstm'
     param_set['ob_style'] = opt.obStyle
 
-    path = str_fob + \
+    path = '/mf' + \
            '/etl'+str(param_set['time_length'])+'-'+ str(param_set['epsilon_start']) + str(param_set['epsilon_end']) + \
            '/m' + str(param_set['mamory_size'])[:-3] + 'k-bs' + str(param_set['batch_size']) + '-tui' + str(param_set['target_update_interval']) + \
            '/g' + str(param_set['gamma'])[2:] + '-REW' + param_set['reward_Type'] + '-delay'+ str(param_set['delay'])+  \
            '-lr'+ str(param_set['learning_rate'])+ '-clip' + str(param_set['grad_norm_clip']) + \
-           '/obs' + param_set['ob_style'] + '-hd' + str(param_set['hidden_dim']) + '-hl' + str(param_set['hidden_layer']) + '/'
+           '/obs' + param_set['ob_style'] + '-o' + str(param_set['obs_hidden_dim'])  + '-a' + str(param_set['action_hidden_dim'])  + '-hd' + str(param_set['hidden_dim']) + '-hl' + str(param_set['hidden_layer']) + '/'
 
     param_set['path'] = path
 
-    # for _ in range(param_set['n_epochs']):
-    #     run(param_set)
+    for _ in range(param_set['n_epochs']):
+        run(param_set)
