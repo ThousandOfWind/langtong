@@ -17,7 +17,7 @@ class DNNAgent(nn.Module):
         self.hidden_layer = param_set['hidden_layer']
 
         self.obs_encoder = nn.Linear(self.input_len, param_set['obs_hidden_dim'])
-        self.action_encoder = nn.Linear(param_set['n_actions'], param_set['action_hidden_dim'])
+        self.action_encoder = nn.Linear(self.output_len, param_set['action_hidden_dim'])
         self.concat_encoder = nn.Linear(param_set['obs_hidden_dim']+ param_set['action_hidden_dim'],self.hidden_dim )
 
         for i in range(self.hidden_layer):
@@ -28,6 +28,7 @@ class DNNAgent(nn.Module):
     def forward(self, obs, action_prob):
         # print(inputs.shape, self.input_len)
         h_obs = F.relu(self.obs_encoder(obs))
+        # print(obs.shape, action_prob.shape, self.output_len)
         h_act = F.relu(self.action_encoder(action_prob))
         h_concat = th.cat([h_obs, h_act], dim=-1)
         x = F.relu(self.concat_encoder(h_concat))

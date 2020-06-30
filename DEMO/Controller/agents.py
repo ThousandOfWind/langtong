@@ -50,6 +50,7 @@ class MF_Agents:
         self.schedule = DecayThenFlatSchedule(start=param_set['epsilon_start'], finish=param_set['epsilon_end'],
                                               time_length=param_set['time_length'], decay="linear")
         self.map = map
+        self.n_actions = param_set['n_actions']
 
         return
 
@@ -63,7 +64,7 @@ class MF_Agents:
             device = th.device("cuda" if th.cuda.is_available() else "cpu")
             flag, lma = memory.get_current(d_id, 'last_mean_action', self.map)
             if not flag:
-
+                lma = th.zeros(self.n_actions)
             q = self.learner.approximate_Q(obs, lma).clone().squeeze()
             available_action = th.FloatTensor(available_action).to(device)
             q[available_action==0] = -9999

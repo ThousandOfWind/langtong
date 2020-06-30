@@ -64,14 +64,12 @@ class MemoryBuffer:
             'last_mean_action': [],
         }
 
-        action = {}
+        action = {d_id:{} for d_id in idList}
 
-        for d_id in idList:
-            if mf:
-                action[d_id] = {}
 
-            for item in range(batchSize):
-                b_id = random.randint(0, len(self.buffer)-1)
+        for item in range(batchSize):
+            b_id = random.randint(0, len(self.buffer)-1)
+            for d_id in idList:
                 batch['obs'] += copy.deepcopy(self.buffer[b_id][d_id]['obs'])
                 batch['reward'] += copy.deepcopy(self.buffer[b_id][d_id]['reward'])
                 batch['action'] += copy.deepcopy(self.buffer[b_id][d_id]['action_index'])
@@ -89,15 +87,16 @@ class MemoryBuffer:
 
                 if mf:
                     device = th.device("cuda" if th.cuda.is_available() else "cpu")
-                    one_hot = th.zeros((len(self.buffer[b_id][d_id]['action_index']), len(self.buffer[b_id][d_id]['immediately_obs'][0]))).to(device)
+                    one_hot = th.zeros((len(self.buffer[b_id][d_id]['action_index']), len(self.buffer[b_id][d_id]['available_action'][0]))).to(device)
                     action_index = th.LongTensor(self.buffer[b_id][d_id]['action_index']).to(device)
                     action[d_id][item] = one_hot.scatter(1, action_index.unsqueeze(1), 1)
 
         if mf:
             for d_id in idList:
                 for item in range(batchSize):
-                    mean_action = np.zeros_like(action[d_id][item])
+                    mean_action = th.zeros_like(action[d_id][item])
                     for nei in map[d_id]['Counterparts']:
+                        # print(mean_action.shape, action[nei][item].shape)
                         mean_action += action[nei][item]
                     mean_action /= len(map[d_id]['Counterparts'])
 
