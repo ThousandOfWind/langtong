@@ -35,7 +35,7 @@ parser.add_argument("--obs_hidden_dim", type=int, default=64, help="hidden dim o
 parser.add_argument("--action_hidden_dim", type=int, default=32, help="hidden dim of network. Default=64")
 parser.add_argument("--hiddenLay", type=int, default=2, help="hidden layer of network. Default=2")
 
-parser.add_argument("--obStyle", type=str, default='primitive', help="primitive, concat, lstm")
+parser.add_argument("--obStyle", type=str, default='lstm', help="primitive, concat, lstm")
 
 
 Peice = 60 * 8
