@@ -135,6 +135,7 @@ def run(param_set):
         agent_id_list = [d.id for d in Artificial_STAGE[stage_id].devices]
         agents = init_Agents(param_set=param, agent_id_list=agent_id_list, writer=writer, name=stage_id, map=Equipment_Relation_Map)
         all_agents[stage_id] = agents
+        Artificial_STAGE[stage_id].obId = param_set['obId']
 
 
     t_min = delay * TIMELIMIT
