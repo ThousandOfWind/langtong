@@ -435,6 +435,8 @@ class Stage:
         self.devices = devices
         self.index_to_action = []
         self.action_to_index = {}
+        self.obId = False
+
 
         count = 0
         for m_id in materials.keys():
@@ -482,10 +484,15 @@ class Stage:
         :param agents:
         :return:
         """
-        for device in self.devices:
+        for index, device in enumerate(self.devices):
             stage_state = self.get_state()
             device_state, available_action = device.get_state(action_to_index=self.action_to_index, clock=clock, materials=materials)
             obs = np.concatenate([stage_state, device_state])
+
+            if self.obId:
+                id = [0] * len(self.devices)
+                id[index] = 1
+                obs = np.concatenate([obs, id])
             action_index = agents.choose_action(obs=obs, available_action=available_action, t=t, d_id=device.id, episode=e, std_out_type=std_out_type, memory=memoryBuffer)
             action = self.index_to_action[action_index]
             device.act(self.action_to_index, action, t, clock, materials, reward_rule, std_out_type)
@@ -502,6 +509,9 @@ class Stage:
             immediately_stage_state = self.get_state()
             immediately_device_state, _ = device.get_state(action_to_index=self.action_to_index, clock=clock, materials=materials)
             immediately_obs = np.concatenate([immediately_stage_state, immediately_device_state])
+
+            if self.obId:
+                immediately_obs = np.concatenate([immediately_obs, id])
 
             experience = {
                 "id": device.id,
@@ -520,6 +530,13 @@ class Stage:
 
 
     def info(self):
+        if self.obId:
+            env_info = {
+                'obs_shape': (len(self.index_to_action) - 1) * 4 + len(self.devices),
+                'n_actions': len(self.index_to_action),
+                'n_agents': len(self.devices)
+            }
+            return env_info
         env_info = {
             'obs_shape': (len(self.index_to_action)-1)*4,
             'n_actions': len(self.index_to_action),

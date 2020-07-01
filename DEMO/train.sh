@@ -22,4 +22,4 @@ python3 meanfield.py --cuda --gpus 1 --batchSize 32 --mamorySize 40 --rewardType
 python3 meanfield.py --cuda --gpus 1 --batchSize 32 --mamorySize 40 --rewardType step &
 
 
-python3 meanfield.py --cuda --gpus 2 --batchSize 32 --rewardType se2 --obStyle lstm &
+python3 meanfield.py --cuda --gpus 2 --batchSize 32 --rewardType se2 --obStyle lstm --obId&

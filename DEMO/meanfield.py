@@ -34,8 +34,8 @@ parser.add_argument("--hiddenDim", type=int, default=64, help="hidden dim of net
 parser.add_argument("--obs_hidden_dim", type=int, default=64, help="hidden dim of network. Default=64")
 parser.add_argument("--action_hidden_dim", type=int, default=32, help="hidden dim of network. Default=64")
 parser.add_argument("--hiddenLay", type=int, default=2, help="hidden layer of network. Default=2")
-
 parser.add_argument("--obStyle", type=str, default='lstm', help="primitive, concat, lstm")
+parser.add_argument("--obId", action="store_true", help="Use agentID?")
 
 
 Peice = 60 * 8
@@ -220,15 +220,18 @@ if __name__ == '__main__':
 
     # 'primitive', 'concat', 'lstm'
     param_set['ob_style'] = opt.obStyle
+    param_set['obId'] = opt.obId
+
 
     path = '/mf' + \
            '/etl'+str(param_set['time_length'])+'-'+ str(param_set['epsilon_start']) + str(param_set['epsilon_end']) + \
            '/m' + str(param_set['mamory_size'])[:-3] + 'k-bs' + str(param_set['batch_size']) + '-tui' + str(param_set['target_update_interval']) + \
            '/g' + str(param_set['gamma'])[2:] + '-REW' + param_set['reward_Type'] + '-delay'+ str(param_set['delay'])+  \
            '-lr'+ str(param_set['learning_rate'])+ '-clip' + str(param_set['grad_norm_clip']) + \
-           '/obs' + param_set['ob_style'] + '-o' + str(param_set['obs_hidden_dim'])  + '-a' + str(param_set['action_hidden_dim'])  + '-hd' + str(param_set['hidden_dim']) + '-hl' + str(param_set['hidden_layer']) + '/'
+           '/obs' + param_set['ob_style'] + ('-obId' if param_set['obId'] else '') + '-o' + str(param_set['obs_hidden_dim'])  + '-a' + str(param_set['action_hidden_dim'])  + '-hd' + str(param_set['hidden_dim']) + '-hl' + str(param_set['hidden_layer']) + '/'
 
     param_set['path'] = path
+
 
     for _ in range(param_set['n_epochs']):
         run(param_set)
