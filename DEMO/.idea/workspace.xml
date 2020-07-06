@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="8c11e6cf-ff4d-4ea9-9c57-62c50cb47418" name="Default Changelist" comment="obId">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/朗通.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/朗通.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,10 +76,6 @@
         <entry key="$PROJECT_DIR$/.." value="master" />
       </map>
     </option>
-  </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1440" />
-    <option name="height" value="900" />
   </component>
   <component name="ProjectId" id="1eIsfGPAqpfgKsHyC5nrLk0xiut" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -222,6 +234,7 @@
       <option name="presentableId" value="Default" />
       <updated>1588392878436</updated>
       <workItem from="1594020544114" duration="205000" />
+      <workItem from="1594020770458" duration="3291000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1591322778941</created>
@@ -279,11 +292,29 @@
       <option name="project" value="LOCAL" />
       <updated>1593568965185</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="obId">
+      <created>1594020822133</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1594020822133</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="2" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First Commit" />
@@ -291,28 +322,28 @@
     <option name="LAST_COMMIT_MESSAGE" value="obId" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="2966" height="424" key="GridCell.Tab.0.bottom" timestamp="1594020748708">
+    <state width="2966" height="544" key="GridCell.Tab.0.bottom" timestamp="1594024987003">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="424" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594020748708" />
-    <state width="2966" height="424" key="GridCell.Tab.0.center" timestamp="1594020748707">
+    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594024987003" />
+    <state width="2966" height="544" key="GridCell.Tab.0.center" timestamp="1594024987001">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="424" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594020748707" />
-    <state width="2966" height="424" key="GridCell.Tab.0.left" timestamp="1594020748706">
+    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594024987001" />
+    <state width="2966" height="544" key="GridCell.Tab.0.left" timestamp="1594024987000">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="424" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594020748706" />
-    <state width="2966" height="424" key="GridCell.Tab.0.right" timestamp="1594020748708">
+    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594024987000" />
+    <state width="2966" height="544" key="GridCell.Tab.0.right" timestamp="1594024987002">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="424" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594020748708" />
+    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594024987002" />
     <state x="1005" y="485" key="SettingsEditor" timestamp="1594020691681">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
     <state x="1005" y="485" key="SettingsEditor/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594020691681" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/DEMO$scheduling.coverage" NAME="scheduling Coverage Results" MODIFIED="1594020704219" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DEMO$scheduling.coverage" NAME="scheduling Coverage Results" MODIFIED="1594024986994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
