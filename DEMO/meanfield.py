@@ -6,7 +6,8 @@ import random
 import numpy as np
 
 from MDP.modules_v2 import DECISION_INTERVAL
-from data.read import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, generate_virtual_order
+from data.read import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, curriculum_order
+from Controller.curriculum_schdule import CURs
 from data.create_map import Equipment_Relation_Map
 from Controller.agents import init_Agents
 from MemoryBuffer.Memory import MemoryBuffer
@@ -37,6 +38,12 @@ parser.add_argument("--hiddenLay", type=int, default=2, help="hidden layer of ne
 parser.add_argument("--obStyle", type=str, default='lstm', help="primitive, concat, lstm")
 parser.add_argument("--obId", action="store_true", help="Use agentID?")
 
+parser.add_argument("--curriculumStyle", type=str, default='base', help="level of task difficulty")
+parser.add_argument("--curriculumTL", type=int, default=200, help="timelength of each curriculum")
+parser.add_argument("--curriculumEnd", type=str, default='fix', help="fix / loss")
+parser.add_argument("--curriculumMemory", type=str, default='private', help="private / share")
+parser.add_argument("--curriculum", action="store_true", help="Use curriculum")
+
 
 Peice = 60 * 8
 Day = 3
@@ -50,7 +57,7 @@ def tToClock(t):
 
 
 # MDP
-def episode(memoryBuffer, all_agents,e,std_out_type, writer, reward_rule, delay, oc, is_target):
+def episode(memoryBuffer, all_agents,e,std_out_type, writer, reward_rule, delay, oc, task):
     t = 0
 
     while True:
@@ -60,10 +67,9 @@ def episode(memoryBuffer, all_agents,e,std_out_type, writer, reward_rule, delay,
             final_rew = max(0, (TIMELIMIT - t ) * reward_rule['reduce_time']) + reward_rule['success']
             memoryBuffer.add_reward(final_rew)
             if std_out_type['result']:
-                print('epsode', e, 'success at step', t, 'win', (TIMELIMIT - t ))
-            if is_target:
-                writer.add_scalar('result/cost_time', t, e)
-                writer.add_scalar('result/remain_oder', 0, e)
+                print(task,'epsode', e, 'success at step', t, 'win', (TIMELIMIT - t ))
+            writer.add_scalar('result/'+ task +'cost_time', t, e)
+            writer.add_scalar('result/'+ task +'remain_oder', 0, e)
             return t, final_rew
 
         # 自上而下的决策stage
@@ -91,10 +97,9 @@ def episode(memoryBuffer, all_agents,e,std_out_type, writer, reward_rule, delay,
             final_rew = reward_rule['fail-order'] * remain_order + reward_rule['fail']
             memoryBuffer.add_reward(final_rew)
             if std_out_type['result']:
-                print('epsode', e, 'fail and remain', remain_order)
-            if is_target:
-                writer.add_scalar('result/cost_time', TIMELIMIT, e)
-                writer.add_scalar('result/remain_oder', remain_order, e)
+                print(task,'epsode', e, 'fail and remain', remain_order)
+            writer.add_scalar('result/'+ task +'cost_time', t, e)
+            writer.add_scalar('result/'+ task +'remain_oder', 0, e)
             return t, final_rew
 
         if t >= TIMELIMIT:
@@ -129,13 +134,54 @@ def run(param_set):
     # 初始化agents
     all_agents = {}
     for stage_id in Artificial_STAGE_name:
+        Artificial_STAGE[stage_id].obId = param_set['obId']
         param = param_set.copy()
         param['path'] = 'model' + path + stage_id + '/'
         param.update(Artificial_STAGE[stage_id].info())
         agent_id_list = [d.id for d in Artificial_STAGE[stage_id].devices]
         agents = init_Agents(param_set=param, agent_id_list=agent_id_list, writer=writer, name=stage_id, map=Equipment_Relation_Map)
         all_agents[stage_id] = agents
-        Artificial_STAGE[stage_id].obId = param_set['obId']
+
+    acummulateE = 0
+    if param_set['curriculum']:
+        curs = CURs[param_set['cS']]
+
+        for cur in curs:
+            task = ''.join([str(int(t)) for t in cur[0]]) + str(cur[1])
+            if param_set['cM'] == 'private':
+                curMB = MemoryBuffer(param_set)
+            else:
+                curMB = memoryBuffer
+            for e in range(param_set['cT']):
+                om, oc = curriculum_order(cur[0], cur[1])
+                # print(task, oc.__str__())
+                episode(memoryBuffer=curMB, all_agents=all_agents, e=e, std_out_type=std_out_type,
+                        writer=writer, reward_rule=reward_rule, delay=delay, oc=oc, task=task)
+                curMB.end_trajectory()
+
+                for o_id in om:
+                    writer.add_scalar(task + '-order/' + o_id, om[o_id].bom[0][1], e)
+
+                for d_id in DEVICE.keys():
+                    DEVICE[d_id].reset()
+
+                for m_id in MATERIAL.keys():
+                    if type(MATERIAL[m_id]) == dict:
+                        for o_id in MATERIAL[m_id].keys():
+                            MATERIAL[m_id][o_id].reset()
+                    else:
+                        MATERIAL[m_id].reset()
+
+                # for o_id in om:
+                #     om[o_id].reset()
+                # oc.reset()
+
+                if (param_set['cM'] == 'private' and e > param_set['batch_size']) \
+                        or (param_set['cM'] == 'share' and (acummulateE + e) > param_set['batch_size']):
+                    for stage_id in Artificial_STAGE_name:
+                        all_agents[stage_id].learn(memory=curMB, episode=acummulateE + e)
+            acummulateE += param_set['cT']
+        del curMB
 
 
     t_min = delay * TIMELIMIT
@@ -145,24 +191,22 @@ def run(param_set):
 
     for e in range(param_set['n_episodes']):
         om, oc = get_oder()
-        is_target = True
 
-        this_t, final_rew = episode(memoryBuffer=memoryBuffer, all_agents=all_agents, e=e, std_out_type=std_out_type,
-                            writer=writer, reward_rule=reward_rule, delay=delay, oc=oc, is_target=is_target)
+        this_t, final_rew = episode(memoryBuffer=memoryBuffer, all_agents=all_agents, e=acummulateE + e, std_out_type=std_out_type,
+                            writer=writer, reward_rule=reward_rule, delay=delay, oc=oc, task='target')
         memoryBuffer.end_trajectory()
 
-        if is_target:
-            if this_t < t_min:
-                print('\tsave!')
-                t_min = this_t
-                for d_id in DEVICE.keys():
-                    DEVICE[d_id].save(result_path)
+        if this_t < t_min:
+            print('\tsave!')
+            t_min = this_t
             for d_id in DEVICE.keys():
-                writer.add_scalar('device-accumulateReward/' + d_id, DEVICE[d_id].accumulateReward, e)
-                writer.add_scalar('device-accumulateRewardwithFinal/' + d_id, DEVICE[d_id].accumulateReward + final_rew, e)
-                writer.add_scalar('device-accumulateWaitTime/' + d_id, DEVICE[d_id].accumulateWaitTime, e)
-            for o_id in om:
-                writer.add_scalar('order/' + o_id, om[o_id].bom[0][1], e)
+                DEVICE[d_id].save(result_path)
+        for d_id in DEVICE.keys():
+            writer.add_scalar('device-accumulateReward/' + d_id, DEVICE[d_id].accumulateReward, acummulateE + e)
+            writer.add_scalar('device-accumulateRewardwithFinal/' + d_id, DEVICE[d_id].accumulateReward + final_rew, acummulateE + e)
+            writer.add_scalar('device-accumulateWaitTime/' + d_id, DEVICE[d_id].accumulateWaitTime, acummulateE + e)
+        for o_id in om:
+            writer.add_scalar('target-order/' + o_id, om[o_id].bom[0][1], acummulateE + e)
 
         for d_id in DEVICE.keys():
             DEVICE[d_id].reset()
@@ -174,10 +218,15 @@ def run(param_set):
             else:
                 MATERIAL[m_id].reset()
 
-
-        if e > param_set['batch_size']:
-            for stage_id in Artificial_STAGE_name:
-                all_agents[stage_id].learn(memory=memoryBuffer, episode=e)
+        if param_set['curriculum']:
+            if (param_set['cM'] == 'private' and e > param_set['batch_size']) \
+                    or (param_set['cM'] == 'share' and (acummulateE + e) > param_set['batch_size']):
+                for stage_id in Artificial_STAGE_name:
+                    all_agents[stage_id].learn(memory=memoryBuffer, episode=acummulateE + e)
+        else:
+            if ( e > param_set['batch_size']) :
+                for stage_id in Artificial_STAGE_name:
+                    all_agents[stage_id].learn(memory=memoryBuffer, episode=e)
 
 
 if __name__ == '__main__':
@@ -223,8 +272,18 @@ if __name__ == '__main__':
     param_set['ob_style'] = opt.obStyle
     param_set['obId'] = opt.obId
 
+    param_set['curriculum'] = opt.curriculum
+    if param_set['curriculum']:
+        param_set['cS'] = opt.curriculumStyle
+        param_set['cT'] = opt.curriculumTL
+        param_set['cE'] = opt.curriculumEnd
+        param_set['cM'] = opt.curriculumMemory
+        strC = '-curriculum' + param_set['cS'] + '-cT' + str(param_set['cT']) + '-end' + param_set['cE'] + '-cM' + param_set['cM']
+    else:
+        strC = ''
 
-    path = '/mf' + \
+
+    path = '/mf' + strC + \
            '/etl'+str(param_set['time_length'])+'-'+ str(param_set['epsilon_start']) + str(param_set['epsilon_end']) + \
            '/m' + str(param_set['mamory_size'])[:-3] + 'k-bs' + str(param_set['batch_size']) + '-tui' + str(param_set['target_update_interval']) + \
            '/g' + str(param_set['gamma'])[2:] + '-REW' + param_set['reward_Type'] + '-delay'+ str(param_set['delay'])+  \
