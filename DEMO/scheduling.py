@@ -1,11 +1,11 @@
-from data.read2 import MATERIAL, DEVICE, DEMAND, get_oder
+from data.read2 import MATERIAL, DEVICE, get_oder
 from data.create_map import Equipment_Relation_Map
 import copy
 import sys
 
-sys.setrecursionlimit(2000)
+sys.setrecursionlimit(50000)
 k = 1  # 每份订单分成k份
-
+device_states = {}  # every value is a list: [设备生产此任务剩余时间(-1：等待中, 0:无任务，待安排), 工艺m_id, 订单o_id, 已等待时间, 换线剩余时间]
 
 
 def schedule(states, materials):
@@ -20,8 +20,12 @@ def schedule(states, materials):
     if flag == 1:  # 没有待安排的设备，可快进至 next_time， 并完成对应生产
         for device_id, state in states.items():
             if state[0] > 0:
-                state[0] -= next_time
-                DEVICE[device_id].crafts[state[1]].produce(state[2], next_time, materials)
+                if state[4] <= 0:
+                    state[0] -= next_time
+                    DEVICE[device_id].crafts[state[1]].produce(state[2], next_time, materials)
+                else:
+                    state[0] -= next_time
+                    state[4] -= next_time
             elif state[0] == -1:
                 state[3] += next_time
     else:
@@ -35,18 +39,20 @@ def schedule(states, materials):
         print('complete')
         return next_time, {}
 
-    for m_id in MATERIAL.keys():
-        if type(MATERIAL[m_id]) == dict:
-            for o_id in MATERIAL[m_id].keys():
-                print(MATERIAL[m_id][o_id].remain)
+    # for m_id in materials.keys():
+    #     if type(materials[m_id]) == dict:
+    #         for o_id in materials[m_id].keys():
+    #             print(m_id, o_id, materials[m_id][o_id].remain, materials[m_id][o_id].demand)
+    # print('loop')
 
     best_time = float("inf")
     best_plan = {}
     for device_id, state in states.items():  # 找到一个可分配任务的设备
         if state[0] == 0 or (state[1] != 'None' and
-                state[0] == -1 and state[3] > DEVICE[device_id].crafts[state[1]].changeTime):  # 可安排生产,选取最优生产
+                             state[0] == -1 and state[3] > DEVICE[device_id].crafts[
+                                 state[1]].changeTime):  # 可安排生产,选取最优生产
 
-            available_actions = DEVICE[device_id].available_actions(materials, state, k)
+            available_actions = DEVICE[device_id].available_actions(materials, k)
             if not available_actions:  # 无可生产项目，等待
                 if state[0] == 0:  # 原本在待安排状态
                     state[0] = -1
@@ -56,18 +62,22 @@ def schedule(states, materials):
             # 若原本在等待状态，则继续查找下一个设备
 
             else:  # 遍历所有可选动作，选取最优
+                #  print("actions                             actions:", available_actions)
                 for action in available_actions:
-                    # print(action)
+                    print(action)
                     m_id = action[0]
                     o_id = action[1]
                     production_time = action[2]
+                    production_amount = action[3]
                     child_states = dict(states)
                     child_materials = copy.deepcopy(materials)
-                    if state[1] != 'None':  # 之前有生产
-                        if DEVICE[device_id].crafts[state[1]].line_id == DEVICE[device_id].crafts[m_id].line_id:
+                    if state[1] != 'None':  # 之前有生产任务
+                        if DEVICE[device_id].crafts[state[1]].line_id == DEVICE[device_id].crafts[m_id].line_id:  # 连续生产
                             child_states[device_id][0] = production_time
                         else:  # 换线
                             child_states[device_id][0] = production_time + DEVICE[device_id].crafts[state[1]].changeTime
+                            child_states[device_id][4] = DEVICE[device_id].crafts[state[1]].changeTime
+                        child_materials[m_id][o_id].produce_refer(production_amount)
                     child_states[device_id][1] = m_id
                     child_states[device_id][2] = o_id
                     child_best_time, child_best_plan = schedule(child_states, child_materials)
@@ -76,6 +86,7 @@ def schedule(states, materials):
                         best_plan = child_best_plan
                 break
     return best_time + next_time, best_plan
+
 
 def set_demand(m_id, o_id, quantity):
     mat = MATERIAL[m_id][o_id]
@@ -88,9 +99,9 @@ def set_demand(m_id, o_id, quantity):
                 MATERIAL[child].demand += quantity * amount
     return
 
-device_states = {}  # every value is a list: [设备生产此任务剩余时间(-1：等待中, 0:无任务，待安排), 工艺m_id, 订单o_id, 已等待时间]
+
 for d_id in DEVICE.keys():
-    device_states[d_id] = [0, "None", "None", 0]
+    device_states[d_id] = [0, "None", "None", 0, 0]
 
 orderML, order_craft = get_oder()
 

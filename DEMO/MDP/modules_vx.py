@@ -19,6 +19,7 @@ class Material:
         self.id = id
         self.type = type
         self.remain = remain
+        self.remain_refer = remain
         self.demand = 0
         self.bom = bom
 
@@ -29,8 +30,11 @@ class Material:
         s = 'Material:' + self.id + ' remain ' + str(self.remain) + ' demand ' + str(self.demand)
         return s
 
-    def produce(self, delta: int):
+    def produce(self, delta):
         self.remain += delta
+
+    def produce_refer(self, delta):
+        self.remain_refer += delta
 
     def consume(self, delta: int):
         if delta > self.remain:
@@ -68,10 +72,10 @@ class Craft:
             + ';'.join([o_id + ':' + self.source[o_id][0][0] + ' ' + str(self.source[o_id][0][1])   for o_id in self.source])
         return s
 
-    def available_actions(self, materials, state, k):
+    def available_actions(self, materials, k):
         avail_actions = []
         for o_id in self.source.keys():
-            if materials[self.m_id][o_id].demand > materials[self.m_id][o_id].remain:
+            if materials[self.m_id][o_id].demand > materials[self.m_id][o_id].remain_refer * 1.1 and materials[self.m_id][o_id].demand > materials[self.m_id][o_id].remain * 1:
                 flag = 1
                 required_production_time = (materials[self.m_id][o_id].demand / k) / self.productivity
                 for s, com in self.source[o_id]:
@@ -84,31 +88,32 @@ class Craft:
                         flag = 0
                         break
                 if flag == 1:
-                    avail_actions.append([self.m_id, o_id, required_production_time])
+                    avail_actions.append([self.m_id, o_id, required_production_time, materials[self.m_id][o_id].demand / k])
         return avail_actions
 
-    def get_state(self, time, materials):
-        """
-        :param time: 可运行时间
-        :return: （real_productivity, refer_productivity）
-        """
-        ret = {}
-        for o_id in self.source.keys():
-            for s, com in self.source[o_id]:
-                if type(materials[s]) == dict:
-                    source = materials[s][o_id]
-                else:
-                    source = materials[s]
-                real_com = com * self.productivity
-                if real_com * time > source.remain:
-                    ret[o_id] = (self.productivity * DECISION_INTERVAL, 0, 0)
-                    break
-                ret[o_id] = ([self.productivity * DECISION_INTERVAL, self.productivity * time, 1])
-        return ret
+    # def get_state(self, time, materials):
+    #     """
+    #     :param time: 可运行时间
+    #     :return: （real_productivity, refer_productivity）
+    #     """
+    #     ret = {}
+    #     for o_id in self.source.keys():
+    #         for s, com in self.source[o_id]:
+    #             if type(materials[s]) == dict:
+    #                 source = materials[s][o_id]
+    #             else:
+    #                 source = materials[s]
+    #             real_com = com * self.productivity
+    #             if real_com * time > source.remain:
+    #                 ret[o_id] = (self.productivity * DECISION_INTERVAL, 0, 0)
+    #                 break
+    #             ret[o_id] = ([self.productivity * DECISION_INTERVAL, self.productivity * time, 1])
+    #     return ret
 
     def produce(self, o_id, time, materials):
         target = self.target_m[o_id]
-        target.produce(time * self.productivity)
+        materials[target.id][o_id].produce(time * self.productivity)
+        # print(o_id)
 
         for s_id, com in self.source[o_id]:
             if type(materials[s_id]) == dict:
@@ -116,7 +121,7 @@ class Craft:
             else:
                 source = materials[s_id]
             source.consume(time * com * self.productivity)
-        return time * self.productivity
+        return
 
     # def act(self, action, time, time_step, materials, std_out_type):
     #     if std_out_type['matrial']:
@@ -202,10 +207,10 @@ class Device:
         s += '\thave changed:' + str(self.changeCraft)
         return s
 
-    def available_actions(self, materials, state, k):
+    def available_actions(self, materials, k):
         avail_actions = []
         for m_id, m_craft in self.crafts.items():
-            avail_actions.extend(m_craft.available_actions(materials, state, k))
+            avail_actions.extend(m_craft.available_actions(materials, k))
         return avail_actions
     #
     # def get_state(self, action_to_index, clock: int, materials):
