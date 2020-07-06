@@ -21,8 +21,6 @@
   <component name="ChangeListManager">
     <list default="true" id="8c11e6cf-ff4d-4ea9-9c57-62c50cb47418" name="Default Changelist" comment="schedule">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MDP/modules_vx.py" beforeDir="false" afterPath="$PROJECT_DIR$/MDP/modules_vx.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scheduling.py" beforeDir="false" afterPath="$PROJECT_DIR$/scheduling.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -202,7 +200,7 @@
       <option name="presentableId" value="Default" />
       <updated>1588392878436</updated>
       <workItem from="1594020544114" duration="205000" />
-      <workItem from="1594020770458" duration="10267000" />
+      <workItem from="1594020770458" duration="11105000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1591322778941</created>
@@ -274,7 +272,14 @@
       <option name="project" value="LOCAL" />
       <updated>1594026437903</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="schedule">
+      <created>1594033948357</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1594033948357</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -298,36 +303,36 @@
     <option name="LAST_COMMIT_MESSAGE" value="schedule" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom" timestamp="1594033918980">
+    <state width="2966" height="544" key="GridCell.Tab.0.bottom" timestamp="1594036659287">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594033918980" />
+    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594036659287" />
     <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594032630981" />
-    <state width="2966" height="544" key="GridCell.Tab.0.center" timestamp="1594033918980">
+    <state width="2966" height="544" key="GridCell.Tab.0.center" timestamp="1594036659285">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594033918980" />
+    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594036659285" />
     <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594032630979" />
-    <state width="2966" height="544" key="GridCell.Tab.0.left" timestamp="1594033918979">
+    <state width="2966" height="544" key="GridCell.Tab.0.left" timestamp="1594036659285">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594033918979" />
+    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594036659285" />
     <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594032630978" />
-    <state width="2966" height="544" key="GridCell.Tab.0.right" timestamp="1594033918980">
+    <state width="2966" height="544" key="GridCell.Tab.0.right" timestamp="1594036659286">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594033918980" />
+    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594036659286" />
     <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594032630980" />
     <state x="1005" y="485" key="SettingsEditor" timestamp="1594020691681">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
     <state x="1005" y="485" key="SettingsEditor/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594020691681" />
-    <state x="1104" y="586" key="Vcs.Push.Dialog.v2" timestamp="1594026621642">
+    <state x="1104" y="586" key="Vcs.Push.Dialog.v2" timestamp="1594033961677">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state x="1104" y="586" key="Vcs.Push.Dialog.v2/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594026621642" />
+    <state x="1104" y="586" key="Vcs.Push.Dialog.v2/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594033961677" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/DEMO$scheduling.coverage" NAME="scheduling Coverage Results" MODIFIED="1594033918882" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DEMO$scheduling.coverage" NAME="scheduling Coverage Results" MODIFIED="1594036659192" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
