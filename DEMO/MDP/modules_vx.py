@@ -32,13 +32,14 @@ class Material:
 
     def produce(self, delta):
         self.remain += delta
+        # print("produce:", self.id, self.remain, self.demand)
 
     def produce_refer(self, delta):
         self.remain_refer += delta
 
-    def consume(self, delta: int):
+    def consume(self, delta):
         if delta > self.remain:
-            print("not enough material")
+            print("not enough material:", self.id, self.remain, delta)
         self.remain -= delta
 
 
@@ -75,7 +76,9 @@ class Craft:
     def available_actions(self, materials, k):
         avail_actions = []
         for o_id in self.source.keys():
-            if materials[self.m_id][o_id].demand > materials[self.m_id][o_id].remain_refer * 1.1 and materials[self.m_id][o_id].demand > materials[self.m_id][o_id].remain * 1:
+            # if self.m_id == "8000001365":
+            #     print(o_id, materials[self.m_id][o_id].demand, materials[self.m_id][o_id].remain)
+            if materials[self.m_id][o_id].demand > materials[self.m_id][o_id].remain_refer * 1.0001 and materials[self.m_id][o_id].demand > materials[self.m_id][o_id].remain * 1.0001:
                 flag = 1
                 required_production_time = (materials[self.m_id][o_id].demand / k) / self.productivity
                 for s, com in self.source[o_id]:
@@ -83,8 +86,7 @@ class Craft:
                         source = materials[s][o_id]
                     else:
                         source = materials[s]
-                    # if required_production_time * com * self.productivity > source.remain:
-                    if com * self.productivity * required_production_time > source.remain:
+                    if com * self.productivity * required_production_time > source.remain * 1.0001:
                         flag = 0
                         break
                 if flag == 1:
@@ -111,8 +113,9 @@ class Craft:
     #     return ret
 
     def produce(self, o_id, time, materials):
-        target = self.target_m[o_id]
-        materials[target.id][o_id].produce(time * self.productivity)
+        # target = self.target_m[o_id]
+        materials[self.m_id][o_id].produce(time * self.productivity)
+        # print("produce:", self.m_id, o_id, materials[self.m_id][o_id].remain, materials[self.m_id][o_id].demand)
         # print(o_id)
 
         for s_id, com in self.source[o_id]:
