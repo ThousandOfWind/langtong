@@ -1,33 +1,128 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BranchesTreeState">
-    <expand>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-    </expand>
-    <select />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c11e6cf-ff4d-4ea9-9c57-62c50cb47418" name="Default Changelist" comment="schedule">
+    <list default="true" id="8c11e6cf-ff4d-4ea9-9c57-62c50cb47418" name="Default Changelist" comment="obId">
+      <change afterPath="$PROJECT_DIR$/Controller/RL/MF_learner_RNN.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Controller/RL/NN/mfbase_rnn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MemoryBuffer/MemoryEpisodic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MDP/modules_vx.py" beforeDir="false" afterPath="$PROJECT_DIR$/MDP/modules_vx.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scheduling.py" beforeDir="false" afterPath="$PROJECT_DIR$/scheduling.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/朗通.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/朗通.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/RL/MF_learner_Counterparts.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/RL/MF_learner_Counterparts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/RL/NN/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/RL/NN/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/RL/dqn_learner.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/RL/dqn_learner.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MemoryBuffer/Memory.py" beforeDir="false" afterPath="$PROJECT_DIR$/MemoryBuffer/Memory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/meanfield.py" beforeDir="false" afterPath="$PROJECT_DIR$/meanfield.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train.sh" afterDir="false" />
     </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MemoryBuffer/Memory.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-67">
+              <caret line="70" column="35" selection-start-line="70" selection-start-column="35" selection-end-line="70" selection-end-column="35" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MDP/modules_v2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-116">
+              <caret line="481" column="56" selection-start-line="481" selection-start-column="44" selection-end-line="481" selection-end-column="56" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Controller/RL/MF_learner_Counterparts.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="300">
+              <caret line="67" column="39" selection-start-line="67" selection-start-column="39" selection-end-line="67" selection-end-column="39" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Controller/agents.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="579">
+              <caret line="68" column="24" selection-start-line="68" selection-start-column="24" selection-end-line="68" selection-end-column="24" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Controller/RL/dqn_learner.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="97" column="39" lean-forward="true" selection-start-line="97" selection-start-column="39" selection-end-line="97" selection-end-column="39" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Controller/RL/MF_learner_RNN.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-346">
+              <caret line="41" column="53" selection-start-line="41" selection-start-column="53" selection-end-line="41" selection-end-column="53" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MemoryBuffer/MemoryEpisodic.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="495">
+              <caret line="97" column="58" selection-start-line="97" selection-start-column="58" selection-end-line="97" selection-end-column="58" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/meanfield.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="259">
+              <caret line="247" lean-forward="true" selection-start-line="247" selection-end-line="247" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/train.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="27" selection-start-line="27" selection-end-line="32" selection-end-column="109" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -36,7 +131,42 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>print</find>
+      <find>avail</find>
+      <find>param</find>
+      <find>devices</find>
+      <find>grad_norm_clip</find>
+      <find>device</find>
+      <find>REWARD_Function</find>
+      <find>REWARD_RUlE</find>
+      <find>mamory_size</find>
+      <find>accumulateReward</find>
+      <find>order_act</find>
+      <find>consume</find>
+      <find>choose_action</find>
+      <find>time</find>
+      <find>get_state</find>
+      <find>std_out_type</find>
+      <find>self.record</find>
+      <find>record</find>
+      <find>self.Q</find>
+      <find>self.ob_style == 'concat':</find>
+      <find>cuda</find>
+      <find>oc</find>
+      <find>orderML</find>
+      <find>order_craft</find>
+      <find>ob_style</find>
+      <find>self.n_actions</find>
+      <find>id</find>
+      <find>acummulateE</find>
+      <find>param_set['cM']</find>
+      <find>curriculum_order</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
+    <option name="UPDATE_TYPE" value="MERGE" />
     <option name="PUSH_AUTO_UPDATE" value="true" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -45,32 +175,130 @@
       </map>
     </option>
   </component>
-  <component name="ProjectId" id="1eIsfGPAqpfgKsHyC5nrLk0xiut" />
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/MDP/classDefine.py" />
+        <option value="$PROJECT_DIR$/RL/agents.py" />
+        <option value="$PROJECT_DIR$/MemoryBuffer/artificialMemory.py" />
+        <option value="$PROJECT_DIR$/MDP/module_objects.py" />
+        <option value="$PROJECT_DIR$/MDP/modules.py" />
+        <option value="$PROJECT_DIR$/MDP/modules_v3.py" />
+        <option value="$PROJECT_DIR$/Controller/RL/model.py" />
+        <option value="$PROJECT_DIR$/Controller/RL/dqn_learner_lio.py" />
+        <option value="$PROJECT_DIR$/Controller/RL/NN/model.py" />
+        <option value="$PROJECT_DIR$/clear.sh" />
+        <option value="$PROJECT_DIR$/MDP/reward.py" />
+        <option value="$PROJECT_DIR$/Controller/curriculum_schdule.py" />
+        <option value="$PROJECT_DIR$/clearlstm.sh" />
+        <option value="$PROJECT_DIR$/data/read.py" />
+        <option value="$PROJECT_DIR$/curriculum.py" />
+        <option value="$PROJECT_DIR$/data/create_map.py" />
+        <option value="$PROJECT_DIR$/run.py" />
+        <option value="$PROJECT_DIR$/Controller/RL/NN/seqLSTM.py" />
+        <option value="$PROJECT_DIR$/Controller/agents.py" />
+        <option value="$PROJECT_DIR$/Controller/RL/NN/mfbase.py" />
+        <option value="$PROJECT_DIR$/MDP/modules_v2.py" />
+        <option value="$PROJECT_DIR$/Controller/RL/NN/mfbase_rnn.py" />
+        <option value="$PROJECT_DIR$/Controller/RL/NN/__init__.py" />
+        <option value="$PROJECT_DIR$/Controller/RL/MF_learner_RNN.py" />
+        <option value="$PROJECT_DIR$/meanfield.py" />
+        <option value="$PROJECT_DIR$/MemoryBuffer/MemoryEpisodic.py" />
+        <option value="$PROJECT_DIR$/train.sh" />
+        <option value="$PROJECT_DIR$/MemoryBuffer/Memory.py" />
+        <option value="$PROJECT_DIR$/Controller/RL/dqn_learner.py" />
+        <option value="$PROJECT_DIR$/Controller/RL/MF_learner_Counterparts.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="width" value="1440" />
+    <option name="height" value="900" />
+  </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DEMO" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DEMO" type="462c0819:PsiDirectoryNode" />
+              <item name="Controller" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DEMO" type="462c0819:PsiDirectoryNode" />
+              <item name="Controller" type="462c0819:PsiDirectoryNode" />
+              <item name="RL" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DEMO" type="462c0819:PsiDirectoryNode" />
+              <item name="Controller" type="462c0819:PsiDirectoryNode" />
+              <item name="RL" type="462c0819:PsiDirectoryNode" />
+              <item name="NN" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DEMO" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DEMO" type="462c0819:PsiDirectoryNode" />
+              <item name="MDP" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DEMO" type="462c0819:PsiDirectoryNode" />
+              <item name="MemoryBuffer" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/MemoryBuffer" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/MemoryBuffer" />
       <recent name="$PROJECT_DIR$/Controller/RL" />
-      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/Controller/RL/NN" />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/data" />
-      <recent name="$PROJECT_DIR$/MDP" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/Controller/RL/NN" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.scheduling">
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.meanfield">
     <configuration name="create_map" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="朗通" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -83,7 +311,6 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/create_map.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -105,7 +332,6 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/curriculum.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -127,8 +353,28 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/meanfield.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="read" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="朗通" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/read.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -149,30 +395,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/run.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="scheduling" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="朗通" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scheduling.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -183,11 +406,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.scheduling" />
         <item itemvalue="Python.meanfield" />
         <item itemvalue="Python.create_map" />
         <item itemvalue="Python.run" />
         <item itemvalue="Python.curriculum" />
+        <item itemvalue="Python.read" />
       </list>
     </recent_temporary>
   </component>
@@ -201,9 +424,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1588392878436</updated>
-      <workItem from="1594020544114" duration="205000" />
-      <workItem from="1594020770458" duration="11301000" />
-      <workItem from="1594093410330" duration="18033000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1591322778941</created>
@@ -261,93 +481,336 @@
       <option name="project" value="LOCAL" />
       <updated>1593568965185</updated>
     </task>
-    <task id="LOCAL-00009" summary="obId">
-      <created>1594020822133</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1594020822133</updated>
-    </task>
-    <task id="LOCAL-00010" summary="schedule">
-      <created>1594026437903</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1594026437903</updated>
-    </task>
-    <task id="LOCAL-00011" summary="schedule">
-      <created>1594033948357</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1594033948357</updated>
-    </task>
-    <task id="LOCAL-00012" summary="schedule">
-      <created>1594036681689</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1594036681689</updated>
-    </task>
-    <option name="localTasksCounter" value="13" />
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="2" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-    <option name="oldMeFiltersMigrated" value="true" />
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16067654" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.36626506" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3192771" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32891566" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.5180723" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16067654" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.14096385" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" visible="true" weight="0.3192771" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32891566" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.5180723" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First Commit" />
     <MESSAGE value="obId" />
-    <MESSAGE value="schedule" />
-    <option name="LAST_COMMIT_MESSAGE" value="schedule" />
+    <option name="LAST_COMMIT_MESSAGE" value="obId" />
   </component>
-  <component name="WindowStateProjectService">
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom" timestamp="1594143861821">
-      <screen x="0" y="0" width="3008" height="1692" />
-    </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594143861821" />
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594032630981" />
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510573" />
-    <state width="2966" height="544" key="GridCell.Tab.0.center" timestamp="1594143861819">
-      <screen x="0" y="0" width="3008" height="1692" />
-    </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594143861819" />
-    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594032630979" />
-    <state width="2966" height="544" key="GridCell.Tab.0.center/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510572" />
-    <state width="2966" height="544" key="GridCell.Tab.0.left" timestamp="1594143861818">
-      <screen x="0" y="0" width="3008" height="1692" />
-    </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594143861818" />
-    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594032630978" />
-    <state width="2966" height="544" key="GridCell.Tab.0.left/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510572" />
-    <state width="2966" height="544" key="GridCell.Tab.0.right" timestamp="1594143861820">
-      <screen x="0" y="0" width="3008" height="1692" />
-    </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594143861820" />
-    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594032630980" />
-    <state width="2966" height="544" key="GridCell.Tab.0.right/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510573" />
-    <state x="1005" y="485" key="SettingsEditor" timestamp="1594020691681">
-      <screen x="0" y="0" width="3008" height="1692" />
-    </state>
-    <state x="1005" y="485" key="SettingsEditor/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594020691681" />
-    <state x="1104" y="586" key="Vcs.Push.Dialog.v2" timestamp="1594036695690">
-      <screen x="0" y="0" width="3008" height="1692" />
-    </state>
-    <state x="1104" y="586" key="Vcs.Push.Dialog.v2/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594036695690" />
-  </component>
-  <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/DEMO$scheduling.coverage" NAME="scheduling Coverage Results" MODIFIED="1594143861812" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/HT01_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/HT03_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/HT07_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/HT10_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/HT15_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/HT38_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/JQJ01_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/ZS11_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/ZS23_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/ZS25_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/ZS12_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/ZS21_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/ZS10_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/ZS08_history.csv" />
+    <entry file="file://$PROJECT_DIR$/result/FOBR5-TL500-linear/etlk-10/-m1k-bs8-g99-REWmnp-delay1/-lr5e-05-clip10-tui200-hd64-hl2/945/ZS17_history.csv" />
+    <entry file="file://$PROJECT_DIR$/Controller/RL/dqn_learner_lio.py" />
+    <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/site-packages/torch/nn/modules/rnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="750">
+          <caret line="522" selection-start-line="522" selection-end-line="522" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/clear.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/dqn_learner_MFm.py" />
+    <entry file="file://$PROJECT_DIR$/Controller/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/clearlstm.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="37" selection-start-line="8" selection-start-column="37" selection-end-line="8" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/epsilon_schedules.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="33" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="632">
+          <caret line="76" column="56" selection-start-line="76" selection-start-column="35" selection-end-line="76" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/create_map.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="61" column="60" selection-start-line="61" selection-start-column="39" selection-end-line="61" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/curriculum_schdule.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="23" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MemoryBuffer/artificialMemory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="3" selection-start-line="4" selection-start-column="3" selection-end-line="4" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/NN/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="15" column="26" selection-start-line="15" selection-start-column="26" selection-end-line="15" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDP/module_objects.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="31" selection-start-line="189" selection-end-line="191" selection-end-column="24" />
+          <folding>
+            <element signature="e#258#3997#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDP/reward.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="555">
+          <caret line="113" column="9" selection-start-line="113" selection-start-column="5" selection-end-line="113" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/ac_learner.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/NN/seqLSTM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="27" column="15" selection-start-line="27" selection-end-line="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/site-packages/torch/nn/modules/module.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="517" selection-start-line="517" selection-end-line="517" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/NN/mfbase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="25" column="17" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/sample/order.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="21" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/sample/bom.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="36" selection-start-line="4" selection-start-column="26" selection-end-line="4" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/sample/device.csv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/sample/craft.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="15" selection-start-line="1" selection-start-column="5" selection-end-line="1" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/curriculum.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2040">
+          <caret line="183" column="14" selection-start-line="183" selection-end-line="216" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+            <element signature="e#2950#5141#0" />
+            <element signature="e#7986#9586#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/read.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="271" column="18" selection-start-line="271" selection-start-column="11" selection-end-line="271" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/sample/materials.csv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/NN/mfbase_rnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="44" lean-forward="true" selection-start-line="44" selection-end-line="44" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/NN/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+          <folding>
+            <element signature="e#0#34#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MemoryBuffer/MemoryEpisodic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="97" column="58" selection-start-line="97" selection-start-column="58" selection-end-line="97" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/MF_learner_RNN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-346">
+          <caret line="41" column="53" selection-start-line="41" selection-start-column="53" selection-end-line="41" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/meanfield.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="247" lean-forward="true" selection-start-line="247" selection-end-line="247" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/dqn_learner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="97" column="39" lean-forward="true" selection-start-line="97" selection-start-column="39" selection-end-line="97" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MemoryBuffer/Memory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-67">
+          <caret line="70" column="35" selection-start-line="70" selection-start-column="35" selection-end-line="70" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDP/modules_v2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-116">
+          <caret line="481" column="56" selection-start-line="481" selection-start-column="44" selection-end-line="481" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/train.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="27" selection-start-line="27" selection-end-line="32" selection-end-column="109" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/agents.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="579">
+          <caret line="68" column="24" selection-start-line="68" selection-start-column="24" selection-end-line="68" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/MF_learner_Counterparts.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="67" column="39" selection-start-line="67" selection-start-column="39" selection-end-line="67" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
   </component>
 </project>

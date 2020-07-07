@@ -19,7 +19,7 @@ parser.add_argument("--cuda", action="store_true", help="Use cuda?")
 parser.add_argument("--gpus", default="2", type=str, help="gpu ids (default: 2)")
 parser.add_argument("--nEpochs", type=int, default=1, help="Number of epochs to train for")
 parser.add_argument("--nEpisode", type=int, default=5000000, help="Number of epochs to train for")
-parser.add_argument("--agentType", default="MF", type=str, help="agentType")
+parser.add_argument("--agentType", default="MF-RNN", type=str, help="agentType")
 parser.add_argument("--rewardType", default="mnp", type=str, help="rewardType")
 parser.add_argument('--pretrained', default='', type=str, help='path to pretrained model (default: none)')
 parser.add_argument("--mamorySize", type=int, default=1000, help="mamorySize")
@@ -35,7 +35,7 @@ parser.add_argument("--hiddenDim", type=int, default=64, help="hidden dim of net
 parser.add_argument("--obs_hidden_dim", type=int, default=64, help="hidden dim of network. Default=64")
 parser.add_argument("--action_hidden_dim", type=int, default=32, help="hidden dim of network. Default=64")
 parser.add_argument("--hiddenLay", type=int, default=2, help="hidden layer of network. Default=2")
-parser.add_argument("--obStyle", type=str, default='lstm', help="primitive, concat, lstm")
+parser.add_argument("--obStyle", type=str, default='primitive', help="primitive, concat, lstm")
 parser.add_argument("--obId", action="store_true", help="Use agentID?")
 
 parser.add_argument("--curriculumStyle", type=str, default='base', help="level of task difficulty")
@@ -47,7 +47,8 @@ parser.add_argument("--curriculum", action="store_true", help="Use curriculum")
 
 Peice = 60 * 8
 Day = 3
-TIMELIMIT = 7 * 24 * 60
+# TIMELIMIT = 7 * 24 * 60
+TIMELIMIT = 3000
 
 
 def tToClock(t):
@@ -99,7 +100,7 @@ def episode(memoryBuffer, all_agents,e,std_out_type, writer, reward_rule, delay,
             if std_out_type['result']:
                 print(task,'epsode', e, 'fail and remain', remain_order)
             writer.add_scalar('result/'+ task +'cost_time', t, e)
-            writer.add_scalar('result/'+ task +'remain_oder', 0, e)
+            writer.add_scalar('result/'+ task +'remain_oder', remain_order, e)
             return t, final_rew
 
         if t >= TIMELIMIT:
@@ -243,6 +244,8 @@ if __name__ == '__main__':
     # _test()
 
     param_set = {}
+    param_set['max_seq_len'] = TIMELIMIT // DECISION_INTERVAL
+
     param_set['agentType'] = opt.agentType
 
     param_set['cuda'] = opt.cuda
@@ -267,6 +270,7 @@ if __name__ == '__main__':
     param_set['obs_hidden_dim'] = opt.obs_hidden_dim
     param_set['action_hidden_dim'] = opt.action_hidden_dim
 
+    param_set['mem_type'] = 'primitive'
 
     # 'primitive', 'concat', 'lstm'
     param_set['ob_style'] = opt.obStyle
@@ -283,9 +287,9 @@ if __name__ == '__main__':
         strC = ''
 
 
-    path = '/mf' + strC + \
+    path = '/' + param_set['agentType'] + strC + \
            '/etl'+str(param_set['time_length'])+'-'+ str(param_set['epsilon_start']) + str(param_set['epsilon_end']) + \
-           '/m' + str(param_set['mamory_size'])[:-3] + 'k-bs' + str(param_set['batch_size']) + '-tui' + str(param_set['target_update_interval']) + \
+           '/m' + str(param_set['mamory_size'])[:-3] + 'k-bs' + str(param_set['batch_size']) + '*-tui' + str(param_set['target_update_interval']) + \
            '/g' + str(param_set['gamma'])[2:] + '-REW' + param_set['reward_Type'] + '-delay'+ str(param_set['delay'])+  \
            '-lr'+ str(param_set['learning_rate'])+ '-clip' + str(param_set['grad_norm_clip']) + \
            '/obs' + param_set['ob_style'] + ('-obId' if param_set['obId'] else '') + '-o' + str(param_set['obs_hidden_dim'])  + '-a' + str(param_set['action_hidden_dim'])  + '-hd' + str(param_set['hidden_dim']) + '-hl' + str(param_set['hidden_layer']) + '/'

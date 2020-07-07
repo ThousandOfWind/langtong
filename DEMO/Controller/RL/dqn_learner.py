@@ -104,7 +104,7 @@ class QLearner:
         next_q[next_avail_action == 0] = -9999
         next_max_q, _ = next_q.max(dim=1)
 
-        targets = (reward + self.gamma * (1 - done) * next_max_q).detach_()
+        targets = (reward + self.gamma * (1 - done) * next_max_q).detach()
         loss = ((chosen_action_qvals - targets) ** 2).sum()
 
         self.writer.add_scalar('Loss/TD_loss_' + self.name, loss.item(), episode)

@@ -64,8 +64,9 @@ class QLearner:
         lio = th.FloatTensor(batch["last_iobs"]).to(device)
         next_lio = th.FloatTensor(batch["iobs"]).to(device)
 
-        shuffle_index = np.arange(reward.shape[0])
-        rd.shuffle(shuffle_index)
+        # shuffle_index = np.arange(reward.shape[0])
+        # rd.shuffle(shuffle_index)
+        shuffle_index = np.random.choice(reward.shape[0], batch["bs"] * 100)
         shuffle_index = th.from_numpy(shuffle_index).to(device)
         reward = reward.gather(dim=0, index=shuffle_index)
         action = action.gather(dim=0, index=shuffle_index)
@@ -88,7 +89,7 @@ class QLearner:
         next_q[next_avail_action == 0] = -9999
         next_max_q, _ = next_q.max(dim=1)
 
-        targets = (reward + self.gamma * (1 - done) * next_max_q).detach_()
+        targets = (reward + self.gamma * (1 - done) * next_max_q).detach()
         loss = ((chosen_action_qvals - targets) ** 2).sum()
 
         self.writer.add_scalar('Loss/TD_loss_'+self.name, loss.item(), episode)
