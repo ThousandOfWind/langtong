@@ -24,3 +24,10 @@ python3 meanfield.py --cuda --gpus 1 --batchSize 32 --mamorySize 40 --rewardType
 
 python3 meanfield.py --cuda --gpus 3 --batchSize 32 --rewardType se2 --obStyle primitive --obId&
 python3 meanfield.py --cuda --gpus 3 --batchSize 32 --rewardType se2 --obStyle primitive --obId --curriculum&
+
+
+python3 meanfield.py --cuda --gpus 2 --batchSize 32 --rewardType se2 --obStyle lstm --obId&
+python3 meanfield.py --cuda --gpus 2 --batchSize 32 --rewardType se2 --obStyle primitive &
+
+python3 meanfield.py --cuda --gpus 3 --batchSize 32 --rewardType se2 --obStyle primitive --obId&
+python3 meanfield.py --cuda --gpus 3 --batchSize 32 --rewardType se2 --obStyle primitive --obId --curriculum&

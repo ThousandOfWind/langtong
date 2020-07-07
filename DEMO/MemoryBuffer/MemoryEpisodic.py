@@ -10,6 +10,7 @@ class MemoryBuffer:
         self.current = {}
         self.mamory_size = param_set['mamory_size']
         self.path = 'data/' + param_set['path']
+        self.max_seq_len = param_set['max_seq_len']
 
 
     def end_trajectory(self):
@@ -62,7 +63,6 @@ class MemoryBuffer:
             'iobs': [],
             'mean_action': [],
             'last_mean_action': [],
-            'bs': batchSize,
         }
 
         action = {d_id:{} for d_id in idList}

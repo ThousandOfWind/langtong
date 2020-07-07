@@ -47,7 +47,8 @@ parser.add_argument("--curriculum", action="store_true", help="Use curriculum")
 
 Peice = 60 * 8
 Day = 3
-TIMELIMIT = 7 * 24 * 60
+# TIMELIMIT = 7 * 24 * 60
+TIMELIMIT = 3000
 
 
 def tToClock(t):
@@ -243,6 +244,8 @@ if __name__ == '__main__':
     # _test()
 
     param_set = {}
+    param_set['max_seq_len'] = TIMELIMIT // DECISION_INTERVAL
+
     param_set['agentType'] = opt.agentType
 
     param_set['cuda'] = opt.cuda
