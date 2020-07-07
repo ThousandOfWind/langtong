@@ -53,16 +53,17 @@ class MemoryBuffer:
     def sample(self, idList:[], batchSize:int, mf=False, map=None):
 
         batch ={
-            'obs': [],
-            'action': [],
-            'reward': [],
-            'done':[],
-            'next_obs': [],
-            'next_avail_action': [],
-            'last_iobs': [],
-            'iobs': [],
-            'mean_action': [],
-            'last_mean_action': [],
+            'obs': [[] for _ in idList],
+            'action': [[] for _ in idList],
+            'reward': [[] for _ in idList],
+            'done':[[] for _ in idList],
+            'next_obs': [[] for _ in idList],
+            'next_avail_action': [[] for _ in idList],
+            'last_iobs': [[] for _ in idList],
+            'iobs': [[] for _ in idList],
+            'mean_action': [[] for _ in idList],
+            'last_mean_action': [[] for _ in idList],
+            'bs': len(idList) * batchSize,
         }
 
         action = {d_id:{} for d_id in idList}
@@ -70,21 +71,21 @@ class MemoryBuffer:
 
         for item in range(batchSize):
             b_id = random.randint(0, len(self.buffer)-1)
-            for d_id in idList:
-                batch['obs'] += copy.deepcopy(self.buffer[b_id][d_id]['obs'])
-                batch['reward'] += copy.deepcopy(self.buffer[b_id][d_id]['reward'])
-                batch['action'] += copy.deepcopy(self.buffer[b_id][d_id]['action_index'])
-                batch['done'] += ([0,]*(len(self.buffer[b_id][d_id]['action_index'])-1)+[1,])
+            for index, d_id in enumerate(idList):
+                batch['obs'][index] += copy.deepcopy(self.buffer[b_id][d_id]['obs'])
+                batch['reward'][index]  += copy.deepcopy(self.buffer[b_id][d_id]['reward'])
+                batch['action'][index]  += copy.deepcopy(self.buffer[b_id][d_id]['action_index'])
+                batch['done'][index]  += ([0,]*(len(self.buffer[b_id][d_id]['action_index'])-1)+[1,])
                 next = copy.deepcopy(self.buffer[b_id][d_id]['obs'][1:])
                 next.append([0]* len(self.buffer[b_id][d_id]['obs'][0]))
-                batch['next_obs'] += next
+                batch['next_obs'][index]  += next
                 next_avail = copy.deepcopy(self.buffer[b_id][d_id]['available_action'][1:])
                 next_avail.append([0]* len(self.buffer[b_id][d_id]['available_action'][0]))
-                batch['next_avail_action'] += (next_avail)
+                batch['next_avail_action'][index]  += (next_avail)
 
-                batch['iobs'] += copy.deepcopy(self.buffer[b_id][d_id]['immediately_obs'])
+                batch['iobs'][index]  += copy.deepcopy(self.buffer[b_id][d_id]['immediately_obs'])
                 last_iobs = self.buffer[b_id][d_id]['immediately_obs'][0:1] + self.buffer[b_id][d_id]['immediately_obs'][:-1]
-                batch['last_iobs'] += copy.deepcopy(last_iobs)
+                batch['last_iobs'][index] += copy.deepcopy(last_iobs)
 
                 if mf:
                     device = th.device("cuda" if th.cuda.is_available() else "cpu")
@@ -93,7 +94,7 @@ class MemoryBuffer:
                     action[d_id][item] = one_hot.scatter(1, action_index.unsqueeze(1), 1)
 
         if mf:
-            for d_id in idList:
+            for index, d_id in enumerate(idList):
                 for item in range(batchSize):
                     mean_action = th.zeros_like(action[d_id][item])
                     for nei in map[d_id]['Counterparts']:
@@ -101,12 +102,22 @@ class MemoryBuffer:
                         mean_action += action[nei][item]
                     mean_action /= len(map[d_id]['Counterparts'])
 
-                    batch['mean_action'].append(copy.deepcopy(mean_action))
-                    batch['last_mean_action'].append(th.zeros((1, mean_action.shape[-1])).to(device))
-                    batch['last_mean_action'].append(copy.deepcopy(mean_action[:-1]))
-            batch['mean_action'] = th.cat(batch['mean_action'], dim=0).to(device)
-            batch['last_mean_action'] = th.cat(batch['last_mean_action'], dim=0).to(device)
+                    batch['mean_action'][index].append(copy.deepcopy(mean_action))
+                    batch['last_mean_action'][index].append(th.zeros((1, mean_action.shape[-1])).to(device))
+                    batch['last_mean_action'][index].append(copy.deepcopy(mean_action[:-1]))
+                batch['mean_action'][index] = th.cat(batch['mean_action'][index], dim=0).to(device)
+                batch['last_mean_action'][index] = th.cat(batch['last_mean_action'][index], dim=0).to(device)
+            batch['mean_action'] = th.stack(batch['mean_action'], dim=0).to(device)
+            batch['last_mean_action'] = th.stack(batch['last_mean_action'], dim=0).to(device)
 
+        batch['obs'] = th.FloatTensor(batch['obs']).to(device)
+        batch['reward'] = th.FloatTensor(batch['reward']).to(device)
+        batch['action'] = th.LongTensor(batch["action"]).to(device)
+        batch['done'] = th.FloatTensor(batch["done"]).to(device)
+        batch['next_obs'] = th.FloatTensor(batch["next_obs"]).to(device)
+        batch['next_avail_action'] = th.FloatTensor(batch["next_avail_action"]).to(device)
+        batch['last_iobs'] = th.FloatTensor(batch["last_iobs"]).to(device)
+        # batch['iobs'] = th.FloatTensor(batch["iobs"]).to(device)                                                                      :-1]
         return batch
 
     def get_current(self, d_id, item,  map=None):
@@ -124,6 +135,27 @@ class MemoryBuffer:
         if d_id in self.current:
             return True, self.current[d_id][item][-1]
         return False, None
+
+    def get_current_trajectory(self, d_id,  map=None):
+        device = th.device("cuda" if th.cuda.is_available() else "cpu")
+        if d_id in self.current:
+            batch = {}
+            batch['bs'] = 1
+            batch['obs'] = th.FloatTensor(self.current[d_id]['obs'])
+            batch['lio'] = th.FloatTensor(self.current[d_id]['obs'][0:1] + self.current[d_id]['immediately_obs'])
+            if d_id in self.current:
+                mean = th.zeros((len(self.current[d_id]['available_action']), len(self.current[d_id]['available_action'][-1]))).to(device)
+                for nei in map[d_id]['Counterparts']:
+                    one_hot = th.zeros_like(mean).to(device)
+                    action_index = th.LongTensor(self.current[nei]['action_index']).to(device)
+                    mean += one_hot.scatter(1, action_index.unsqueeze(1), 1)
+                mean /= len(map[d_id]['Counterparts'])
+            batch['lma'] = th.cat([th.zeros((1, mean.shape[-1])).to(device), mean], dim=0)
+
+            return True, batch
+        else:
+            return False, None
+
 
     def add_reward(self, delta_reward):
         for device in self.current.keys():

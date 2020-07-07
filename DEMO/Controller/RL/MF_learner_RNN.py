@@ -39,56 +39,48 @@ class QLearner:
     def update(self):
         self.target_Q.load_state_dict(self.Q.state_dict())
 
-    def approximate_Q(self, obs, former_act_prob, lio):
-        device = th.device("cuda" if th.cuda.is_available() else "cpu")
-        obs = th.FloatTensor(obs).to(device).reshape(1,-1)
-        former_act_prob = former_act_prob.to(device).reshape(1,-1)
-        lio = th.FloatTensor(lio).to(device).reshape(1,-1)
-
-        q = self.Q(obs, lio, former_act_prob)
+    def approximate_Q(self, batch):
+        hidden_states = self.Q.init_hidden()
+        for t in range(len(batch['obs'])):
+            q, hidden_states = self.Q(obs=batch['obs'][t:t+1], action_prob=batch['lma'][t:t+1], hidden_state=hidden_states)
         return q
 
+
+
     def train(self, batch, episode):
-        # batch * agent , t
-        device = th.device("cuda" if th.cuda.is_available() else "cpu")
 
         self.train_step += 1
-        reward = th.FloatTensor(batch["reward"]).to(device)
-        action = th.LongTensor(batch["action"]).to(device)
-        done = th.FloatTensor(batch["done"]).to(device)
-        obs = th.FloatTensor(batch["obs"]).to(device)
-        next_avail_action = th.FloatTensor(batch["next_avail_action"]).to(device)
-        next_obs = th.FloatTensor(batch["next_obs"]).to(device)
-        mean_action = batch["mean_action"].to(device)
-        last_mean_action = batch['last_mean_action'].to(device)
-        lio = th.FloatTensor(batch["last_iobs"]).to(device)
-        next_lio = th.FloatTensor(batch["iobs"]).to(device)
 
-        shuffle_index = np.arange(reward.shape[0])
-        rd.shuffle(shuffle_index)
-        shuffle_index = th.from_numpy(shuffle_index).to(device)
-        reward = reward.gather(dim=0, index=shuffle_index)
-        action = action.gather(dim=0, index=shuffle_index)
-        done = done.gather(dim=0, index=shuffle_index)
-        obs = obs.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,obs.shape[1]))
-        next_obs = next_obs.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,next_obs.shape[1]))
-        next_avail_action = next_avail_action.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,next_avail_action.shape[1]))
-        mean_action = mean_action.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,mean_action.shape[1]))
-        last_mean_action = last_mean_action.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,last_mean_action.shape[1]))
-        lio = lio.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,obs.shape[1]))
-        next_lio = next_lio.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,obs.shape[1]))
+        hidden_states = self.Q.init_hidden().unsqueeze(0).expand(batch['bs'], -1)
+        q_batch = []
+        for t, done in enumerate(batch['done'][0]):
+            q, hidden_states = self.Q(obs=batch['obs'][:, t], action_prob=batch['lma'][:, t], hidden_state=hidden_states)
+            q_batch.append(q)
+            if done:
+                hidden_states = self.Q.init_hidden().unsqueeze(0).expand(batch['bs'], -1)
+        q_batch = th.stack(q_batch, dim=1)
+
+        next_hidden_states = self.target_Q.init_hidden().unsqueeze(0).expand(batch['bs'], -1)
+        next_q_batch = []
+        _, next_hidden_states = self.target_Q(obs=batch['obs'][:,0], action_prob=batch['lma'][:,0], hidden_state=next_hidden_states)
+        for t, done in enumerate(batch['done'][0]):
+            q, next_hidden_states = self.target_Q(obs=batch['obs'][:, t], action_prob=batch['lma'][:, t], hidden_state=next_hidden_states)
+            next_q_batch.append(q)
+            if done:
+                if t == len(batch['done'][0]) -1:
+                    break
+                next_hidden_states = self.target_Q.init_hidden().unsqueeze(0).expand(batch['bs'], -1)
+                _, next_hidden_states = self.target_Q(obs=batch['obs'][:, t+1], action_prob=batch['lma'][:,t+1],
+                                                      hidden_state=next_hidden_states)
+        next_q_batch = th.stack(next_q_batch, dim=1)
+
+        chosen_action_qvals = th.gather(q, dim=2, index=batch['action'].unsqueeze(-1)).squeeze(-1)
 
 
-        q = self.Q(obs, lio, last_mean_action)
+        next_q_batch[batch['next_avail_action'] == 0] = -9999
+        next_max_q, _ = next_q_batch.max(dim=1)
 
-        chosen_action_qvals = th.gather(q, dim=1, index=action.unsqueeze(-1)).squeeze(-1)
-
-        next_q = self.Q(next_obs, next_lio, mean_action)
-
-        next_q[next_avail_action == 0] = -9999
-        next_max_q, _ = next_q.max(dim=1)
-
-        targets = (reward + self.gamma * (1 - done) * next_max_q).detach_()
+        targets = (batch['reward'] + self.gamma * (1 - batch['done']) * next_max_q).detach()
         loss = ((chosen_action_qvals - targets) ** 2).sum()
 
         self.writer.add_scalar('Loss/TD_loss_'+self.name, loss.item(), episode)

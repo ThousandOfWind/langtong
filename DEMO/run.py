@@ -234,6 +234,7 @@ if __name__ == '__main__':
     # 'primitive', 'concat', 'lstm'
     param_set['ob_style'] = opt.obStyle
 
+
     path = str_fob + \
            '/etl'+str(param_set['time_length'])+'-'+ str(param_set['epsilon_start']) + str(param_set['epsilon_end']) + \
            '/m' + str(param_set['mamory_size'])[:-3] + 'k-bs' + str(param_set['batch_size']) + '-tui' + str(param_set['target_update_interval']) + \
