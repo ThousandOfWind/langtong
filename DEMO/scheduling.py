@@ -12,8 +12,8 @@ def schedule(states, materials):
     print(states)
     next_time = float("inf")  # "快进"时间
     flag = 1
-    for device, state in states.items():
-        if 0 < state[0] < next_time:  # "快进"至最近结束的任务
+    for device, state in states.items():  # 找到最近的可能有动作的时间点，并"快进"至该时间点
+        if 0 < state[0] < next_time:
             next_time = state[0]
         if 0 < state[4] < next_time:
             next_time = state[4]
@@ -23,10 +23,6 @@ def schedule(states, materials):
     if next_time == float("inf") and flag == 1:
         # print(states)
         next_time = 5
-        # for device, state in states.items():
-        #     if state[0] == -1:
-        #         state[3] += 5
-        # return schedule(states, materials)
 
     if flag == 1:  # 没有待安排的设备，可快进至 next_time， 并完成对应生产
         for device_id, state in states.items():
@@ -43,7 +39,7 @@ def schedule(states, materials):
         next_time = 0
 
     completed = 1
-    for o_id, order in orderML.items():
+    for o_id, order in orderML.items():  # 检查订单是否完成
         if order.bom[0][1] > materials[order.bom[0][0]][o_id].remain * 1.0001:
             completed = 0
     if completed == 1:
