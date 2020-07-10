@@ -2,13 +2,10 @@ import numpy as np
 import copy
 import csv
 
-
 DECISION_INTERVAL = 60
 
-
-
 class Material:
-    def __init__(self, id: str, type:bool, bom, remain=float('inf')):
+    def __init__(self, id: str, type: bool, bom, remain=float('inf')):
         """
         :param id: 物料编号
         remain : 实际余量 中间产品余量初始化为0或定义余量，原材料初始化为np.inf
@@ -42,9 +39,9 @@ class Material:
             print("not enough material:", self.id, self.remain, delta)
         self.remain -= delta
 
-
     def add_demand(self, delta: int):
         self.demand += delta
+
 
 class Craft:
     def __init__(self, d_id: str, m_id: str, target, changeTime: int, line_id: str):
@@ -58,19 +55,21 @@ class Craft:
         self.m_id = m_id
         self.target_m = target[0]
         self.productivity = target[1]
-        self.source = {o_id:list(self.target_m[o_id].bom) for o_id in self.target_m.keys()}
+        self.source = {o_id: list(self.target_m[o_id].bom) for o_id in self.target_m.keys()}
         self.changeTime = changeTime
         self.line_id = line_id
 
     def reset(self):
-        self.source = {o_id:list(self.target_m[o_id].bom) for o_id in self.target_m.keys()}
+        self.source = {o_id: list(self.target_m[o_id].bom) for o_id in self.target_m.keys()}
 
     def __str__(self):
         # s = 'Craft of ' + self.d_id + ' productivity:' + str(self.productivity) + ' changeTime:' + str(self.changeTime)
         # s += 'produce:' + str(self.target_m.keys()) + '\n'
 
-        s = 'Craft of ' + self.d_id + ' produce ' + str(self.productivity) + ' ' + str(self.target_m.keys()) + ' by \n \t' \
-            + ';'.join([o_id + ':' + self.source[o_id][0][0] + ' ' + str(self.source[o_id][0][1])   for o_id in self.source])
+        s = 'Craft of ' + self.d_id + ' produce ' + str(self.productivity) + ' ' + str(
+            self.target_m.keys()) + ' by \n \t' \
+            + ';'.join(
+            [o_id + ':' + self.source[o_id][0][0] + ' ' + str(self.source[o_id][0][1]) for o_id in self.source])
         return s
 
     def available_actions(self, materials, k):
@@ -78,7 +77,7 @@ class Craft:
         for o_id in self.source.keys():
             # if self.m_id == "8000001365":
             #     print(o_id, materials[self.m_id][o_id].demand, materials[self.m_id][o_id].remain)
-            if materials[self.m_id][o_id].demand > materials[self.m_id][o_id].remain_refer * 1.0001 and materials[self.m_id][o_id].demand > materials[self.m_id][o_id].remain * 1.0001:
+            if materials[self.m_id][o_id].demand > materials[self.m_id][o_id].remain_refer * 1.0001:
                 flag = 1
                 required_production_time = (materials[self.m_id][o_id].demand / k) / self.productivity
                 for s, com in self.source[o_id]:
@@ -90,7 +89,8 @@ class Craft:
                         flag = 0
                         break
                 if flag == 1:
-                    avail_actions.append([self.m_id, o_id, required_production_time, materials[self.m_id][o_id].demand / k])
+                    avail_actions.append(
+                        [self.m_id, o_id, required_production_time, materials[self.m_id][o_id].demand / k])
         return avail_actions
 
     # def get_state(self, time, materials):
@@ -168,13 +168,15 @@ class Craft:
     #             ret += s[1]
     #     return ret
 
+
 class Device:
     """
     get_state
     get_reward
     act
     """
-    def __init__(self, id, crafts, operatingHours = [1,1,1]):
+
+    def __init__(self, id, crafts, operatingHours=[1, 1, 1]):
         """
         :param id: 设备编号
         :param crafts: 设备可执行工艺 --> 工艺产品：工艺  [Craft] or {m_id: Craft}
@@ -205,7 +207,7 @@ class Device:
     def __str__(self):
         s = '-----Device ID:' + self.id + '-----\n'
         s += 'current action ' + str(self.present_craft) + '\n'
-        s += 'have produced:' + str([key +':' + str(self.production[key]) for key in self.production.keys()]) + '\n'
+        s += 'have produced:' + str([key + ':' + str(self.production[key]) for key in self.production.keys()]) + '\n'
         s += 'have waited:' + str(self.accumulateWaitTime)
         s += '\thave changed:' + str(self.changeCraft)
         return s
@@ -264,7 +266,7 @@ class Stage:
         :param materials:
         :param refer_crafts:
         """
-        self.name=name
+        self.name = name
         self.materials = materials
         self.devices = devices
         self.index_to_action = []
@@ -278,7 +280,7 @@ class Stage:
                     'o_id': o_id
                 }
                 self.index_to_action.append(ita)
-                self.action_to_index[m_id+o_id] = count
+                self.action_to_index[m_id + o_id] = count
                 count += 1
         ita = {
             'm_id': 'wait',
@@ -286,7 +288,6 @@ class Stage:
         }
         self.index_to_action.append(ita)
         self.action_to_index['wait'] = count
-
 
     def __str__(self):
         s = '-----Stage Name:' + self.name + '-----\n'
@@ -305,30 +306,16 @@ class Stage:
                 source.add_demand(c * m.demand)
 
     def get_state(self):
-        state = np.zeros((2,len(self.index_to_action)-1))
+        state = np.zeros((2, len(self.index_to_action) - 1))
         for index, action in enumerate(self.index_to_action[:-1]):
             m = self.materials[action['m_id']][action['o_id']]
-            state[0,index], state[1,index] = m.state()
+            state[0, index], state[1, index] = m.state()
         return state.reshape(-1)
 
     def info(self):
         env_info = {
-            'obs_shape': (len(self.index_to_action)-1)*4,
+            'obs_shape': (len(self.index_to_action) - 1) * 4,
             'n_actions': len(self.index_to_action),
             'n_agents': len(self.devices)
         }
         return env_info
-
-
-
-
-
-
-
-
-
-
-
-
-
-

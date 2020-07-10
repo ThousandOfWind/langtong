@@ -9,7 +9,7 @@ device_states = {}  # every value is a list: [设备生产此任务剩余时间(
 
 
 def schedule(states, materials):
-    print(states)
+    # print(states)
     next_time = float("inf")  # "快进"时间
     flag = 1
     for device, state in states.items():  # 找到最近的可能有动作的时间点，并"快进"至该时间点
@@ -46,11 +46,11 @@ def schedule(states, materials):
         print("complete")
         return next_time, {}
 
-    # for m_id in materials.keys():
-    #     if type(materials[m_id]) == dict:
-    #         for o_id in materials[m_id].keys():
-    #             print(m_id, o_id, materials[m_id][o_id].remain, materials[m_id][o_id].demand)
-    # print('loop')
+    for m_id in materials.keys():
+        if type(materials[m_id]) == dict:
+            for o_id in materials[m_id].keys():
+                print(m_id, o_id, materials[m_id][o_id].remain, materials[m_id][o_id].demand)
+    print('loop')
 
     best_time = float("inf")
     best_plan = {}
@@ -66,7 +66,7 @@ def schedule(states, materials):
                 #     for key, c in DEVICE[device_id].crafts.items():
                 #         print(c.m_id)
                 if state[0] == 0:  # 原本在待安排状态
-                    child_states = dict(states)
+                    child_states = copy.deepcopy(states)
                     child_materials = copy.deepcopy(materials)
                     child_states[device_id][0] = -1
                     child_states[device_id][3] = 0
@@ -86,7 +86,7 @@ def schedule(states, materials):
                     # print("amount:", m_id, o_id, materials[m_id][o_id].remain, materials[m_id][o_id].demand)
                     production_time = action[2]
                     production_amount = action[3]
-                    child_states = dict(states)
+                    child_states = copy.deepcopy(states)
                     child_materials = copy.deepcopy(materials)
                     if state[1] != 'None':  # 之前有生产任务
                         if DEVICE[device_id].crafts[state[1]].line_id == DEVICE[device_id].crafts[m_id].line_id:  # 连续生产
@@ -95,7 +95,7 @@ def schedule(states, materials):
                         else:  # 换线
                             child_states[device_id][0] = production_time + DEVICE[device_id].crafts[state[1]].changeTime
                             child_states[device_id][4] = DEVICE[device_id].crafts[state[1]].changeTime
-                        child_materials[m_id][o_id].produce_refer(production_amount)
+                    child_materials[m_id][o_id].produce_refer(production_amount)
                     child_states[device_id][1] = m_id
                     child_states[device_id][2] = o_id
                     child_best_time, child_best_plan = schedule(child_states, child_materials)
