@@ -60,8 +60,8 @@ def schedule(current_time, remain, scheduled, device_states):
     #             print(m_id, o_id, scheduled[m_id][o_id], remain[m_id][o_id], DEMAND[m_id][o_id])
     # print(dict(filter(lambda elem: elem[1][0] > 0, device_states.items())))
     # print("loop:", current_time)
-    if current_time > BEST_SO_FAR:
-        return current_time, {}
+    if current_time >= BEST_SO_FAR:
+        return current_time + 10, {}
     completed = 1
     for o_id, order in orderML.items():  # 检查订单是否完成
         if order.bom[0][1] > remain[order.bom[0][0]][o_id] * 1.0001:
