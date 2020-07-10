@@ -8,7 +8,7 @@ k = 1  # 每份订单分成k份
 device_states = {}  # every value is a list: [设备生产此任务剩余时间(-1：等待中, 0:无任务，待安排), 工艺m_id, 订单o_id, 已等待时间, 换线剩余时间]
 
 
-def schedule(states, materials):
+def schedule(states, materials, current_time):
     # print(states)
     next_time = float("inf")  # "快进"时间
     flag = 1
@@ -43,14 +43,14 @@ def schedule(states, materials):
         if order.bom[0][1] > materials[order.bom[0][0]][o_id].remain * 1.0001:
             completed = 0
     if completed == 1:
-        print("complete")
-        return next_time, {}
+        print("complete", current_time + next_time)
+        return next_time + current_time, {}
 
-    for m_id in materials.keys():
-        if type(materials[m_id]) == dict:
-            for o_id in materials[m_id].keys():
-                print(m_id, o_id, materials[m_id][o_id].remain, materials[m_id][o_id].demand)
-    print('loop')
+    # for m_id in materials.keys():
+    #     if type(materials[m_id]) == dict:
+    #         for o_id in materials[m_id].keys():
+    #             print(m_id, o_id, materials[m_id][o_id].remain, materials[m_id][o_id].demand)
+    # print('loop')
 
     best_time = float("inf")
     best_plan = {}
@@ -70,7 +70,7 @@ def schedule(states, materials):
                     child_materials = copy.deepcopy(materials)
                     child_states[device_id][0] = -1
                     child_states[device_id][3] = 0
-                    child_best_time, child_best_plan = schedule(child_states, child_materials)
+                    child_best_time, child_best_plan = schedule(child_states, child_materials, current_time + next_time)
                     if child_best_time < best_time:
                         best_time = child_best_time
                         best_plan = child_best_plan
@@ -95,10 +95,13 @@ def schedule(states, materials):
                         else:  # 换线
                             child_states[device_id][0] = production_time + DEVICE[device_id].crafts[state[1]].changeTime
                             child_states[device_id][4] = DEVICE[device_id].crafts[state[1]].changeTime
+                    else:
+                        child_states[device_id][0] = production_time
+                        child_states[device_id][4] = 0
                     child_materials[m_id][o_id].produce_refer(production_amount)
                     child_states[device_id][1] = m_id
                     child_states[device_id][2] = o_id
-                    child_best_time, child_best_plan = schedule(child_states, child_materials)
+                    child_best_time, child_best_plan = schedule(child_states, child_materials, current_time + next_time)
                     if child_best_time < best_time:
                         best_time = child_best_time
                         best_plan = child_best_plan
@@ -108,7 +111,7 @@ def schedule(states, materials):
     #         for o_id in materials[m_id].keys():
     #             print(m_id, o_id, materials[m_id][o_id].remain, materials[m_id][o_id].demand)
     # print('loop')
-    return schedule(states, materials)
+    return schedule(states, materials, current_time + next_time)
 
 
 def set_demand(m_id, o_id, quantity):
@@ -140,5 +143,5 @@ for o_id, order_mat in orderML.items():
 #         for o_id in MATERIAL[m_id].keys():
 #             print(MATERIAL[m_id][o_id].demand)
 
-overall_best_time, overall_best_plan = schedule(device_states, MATERIAL)
+overall_best_time, overall_best_plan = schedule(device_states, MATERIAL, 0)
 print(overall_best_time)

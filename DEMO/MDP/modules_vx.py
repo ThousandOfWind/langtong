@@ -35,8 +35,8 @@ class Material:
         self.remain_refer += delta
 
     def consume(self, delta):
-        if delta > self.remain:
-            print("not enough material:", self.id, self.remain, delta)
+        # if delta > self.remain:
+        #     print("not enough material:", self.id, self.remain, delta)
         self.remain -= delta
 
     def add_demand(self, delta: int):

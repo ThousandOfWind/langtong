@@ -2,12 +2,12 @@ from data.read2 import MATERIAL, DEVICE, get_oder
 import copy
 import sys
 
-sys.setrecursionlimit(2000)
+sys.setrecursionlimit(10000)
 DEMAND = {}  # 需求
 REMAIN = {}  # 剩余
 SCHEDULED = {}  # 已安排的生产
 DEVICE_STATES = {}  # every value is a list: [设备生产此任务剩余时间(-1：等待中, 0:无任务，待安排, -2: 与 -1 相同，但跳过本次), 工艺m_id, 订单o_id, 已等待时间, 换线剩余时间]
-SEARCH_STEP = 30  # 时间粒度
+SEARCH_STEP = 10  # 时间粒度
 PRODUCTION_STEP = 30  # 生产划分粒度
 BEST_SO_FAR = float('inf')
 
