@@ -117,7 +117,7 @@ def schedule(current_time, remain, scheduled, device_states,current_plan):
                 child_remain = copy.deepcopy(remain)
                 child_scheduled = copy.deepcopy(scheduled)
                 child_plan = copy.deepcopy(current_plan)
-                if state[1] != 'None':  # 之前有生产任务
+                if state[1] != "None":  # 之前有生产任务
                     if state[1] == m_id:  # 连续生产
                         child_states[d_id][0] = production_time
                         child_states[d_id][4] = 0
@@ -129,6 +129,7 @@ def schedule(current_time, remain, scheduled, device_states,current_plan):
                 else:
                     child_states[d_id][0] = production_time
                     child_states[d_id][4] = 0
+                    child_plan[d_id].append([m_id, o_id, current_time, production_time])
                 # if m_id == '8000001341' and o_id == '5000221032-40':
                 #     print(child_scheduled[m_id][o_id], production_amount, current_time, d_id)
                 # if current_time == 0 and d_id == 'ZS04':
