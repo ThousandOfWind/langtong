@@ -1,6 +1,7 @@
 from data.read2 import MATERIAL, DEVICE, get_oder
 import copy
 import sys
+import matplotlib.pyplot as plt
 
 sys.setrecursionlimit(10000)
 DEMAND = {}  # 需求
@@ -10,7 +11,24 @@ DEVICE_STATES = {}  # every value is a list: [设备生产此任务剩余时间(
 SEARCH_STEP = 10  # 时间粒度
 PRODUCTION_STEP = 30  # 生产划分粒度
 BEST_SO_FAR = float('inf')
+DEVICE_ID = list(DEVICE.keys())
 
+def gantt(plan):
+    print(plan)
+    plt.figure(figsize=(50, 50))
+    for i in range(len(DEVICE_ID)):
+        prod_list = plan[DEVICE_ID[i]]
+        for j in range(len(prod_list)):
+            production = prod_list[j]
+            m_id = production[0]
+            o_id = production[1]
+            start_time = production[2]
+            production_time = production[3]
+            plt.barh(DEVICE_ID[i], production_time, left=start_time)
+            plt.text(start_time, DEVICE_ID[i], '%s\n%s'%(m_id, o_id))
+    plt.yticks(DEVICE_ID)
+    plt.show()
+    return
 
 def set_demand(m_id, o_id, quantity):
     mat = MATERIAL[m_id][o_id]
@@ -52,7 +70,7 @@ def produce(remain, m_id, o_id, d_id, time):
             # if remain[s][o_id] < 0:
             #     print("not enough material:", m_id, remain[s][o_id])
 
-def schedule(current_time, remain, scheduled, device_states):
+def schedule(current_time, remain, scheduled, device_states,current_plan):
     global BEST_SO_FAR
     # for m_id in MATERIAL.keys():
     #     if type(MATERIAL[m_id]) == dict:
@@ -68,6 +86,7 @@ def schedule(current_time, remain, scheduled, device_states):
             completed = 0
     if completed == 1:
         print("complete", current_time)
+        gantt(current_plan)
         return current_time, {}
 
     for d_id, state in device_states.items():
@@ -82,7 +101,8 @@ def schedule(current_time, remain, scheduled, device_states):
                     child_scheduled = copy.deepcopy(scheduled)
                     child_states[d_id][0] = -2
                     child_states[d_id][3] = 0
-                    return schedule(current_time, child_remain, child_scheduled, child_states)
+                    child_plan = copy.deepcopy(current_plan)
+                    return schedule(current_time, child_remain, child_scheduled, child_states, child_plan)
                 else:
                     continue
             best_time = float('inf')
@@ -96,13 +116,16 @@ def schedule(current_time, remain, scheduled, device_states):
                 child_states = copy.deepcopy(device_states)
                 child_remain = copy.deepcopy(remain)
                 child_scheduled = copy.deepcopy(scheduled)
+                child_plan = copy.deepcopy(current_plan)
                 if state[1] != 'None':  # 之前有生产任务
                     if state[1] == m_id:  # 连续生产
                         child_states[d_id][0] = production_time
                         child_states[d_id][4] = 0
+                        child_plan[d_id].append([m_id, o_id, current_time, production_time])
                     else:  # 换线
                         child_states[d_id][0] = production_time + DEVICE[d_id].crafts[state[1]].changeTime
                         child_states[d_id][4] = DEVICE[d_id].crafts[state[1]].changeTime
+                        child_plan[d_id].append([m_id, o_id, current_time + DEVICE[d_id].crafts[state[1]].changeTime, production_time])
                 else:
                     child_states[d_id][0] = production_time
                     child_states[d_id][4] = 0
@@ -114,7 +137,7 @@ def schedule(current_time, remain, scheduled, device_states):
                 child_states[d_id][1] = m_id
                 child_states[d_id][2] = o_id
                 child_states[d_id][3] = 0
-                child_best_time, child_best_plan = schedule(current_time, child_remain, child_scheduled, child_states)
+                child_best_time, child_best_plan = schedule(current_time, child_remain, child_scheduled, child_states, child_plan)
                 if child_best_time < best_time:
                     best_time = child_best_time
                     best_plan = child_best_plan
@@ -145,7 +168,7 @@ def schedule(current_time, remain, scheduled, device_states):
             state[3] += SEARCH_STEP
             state[0] = -1
 
-    return schedule(current_time + SEARCH_STEP, remain, scheduled, device_states)
+    return schedule(current_time + SEARCH_STEP, remain, scheduled, device_states, current_plan)
 
 
 orderML, order_craft = get_oder()
@@ -168,4 +191,8 @@ for o_id, order_mat in orderML.items():
 for d_id in DEVICE.keys():
     DEVICE_STATES[d_id] = [0, "None", "None", 0, 0]
 
-overall_best_time, overall_best_plan = schedule(0, REMAIN, SCHEDULED, DEVICE_STATES)
+init_plan = {}
+for dev in DEVICE_ID:
+    init_plan[dev] = []
+
+overall_best_time, overall_best_plan = schedule(0, REMAIN, SCHEDULED, DEVICE_STATES, init_plan)

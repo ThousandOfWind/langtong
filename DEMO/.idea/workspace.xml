@@ -21,8 +21,6 @@
   <component name="ChangeListManager">
     <list default="true" id="8c11e6cf-ff4d-4ea9-9c57-62c50cb47418" name="Default Changelist" comment="scheduling_v2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MDP/modules_vx.py" beforeDir="false" afterPath="$PROJECT_DIR$/MDP/modules_vx.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scheduling.py" beforeDir="false" afterPath="$PROJECT_DIR$/scheduling.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scheduling_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/scheduling_v2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -116,28 +114,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="run" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="朗通" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/run.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="scheduling" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="朗通" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -182,13 +158,35 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="朗通" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.scheduling_v2" />
+        <item itemvalue="Python.test" />
         <item itemvalue="Python.scheduling" />
         <item itemvalue="Python.meanfield" />
         <item itemvalue="Python.create_map" />
-        <item itemvalue="Python.run" />
       </list>
     </recent_temporary>
   </component>
@@ -206,7 +204,8 @@
       <workItem from="1594020770458" duration="11301000" />
       <workItem from="1594093410330" duration="18033000" />
       <workItem from="1594348464972" duration="7717000" />
-      <workItem from="1594362548186" duration="9518000" />
+      <workItem from="1594362548186" duration="10127000" />
+      <workItem from="1594517775742" duration="5855000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1591322778941</created>
@@ -320,7 +319,14 @@
       <option name="project" value="LOCAL" />
       <updated>1594372871179</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="scheduling_v2">
+      <created>1594390134042</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1594390134042</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -347,41 +353,42 @@
     <option name="LAST_COMMIT_MESSAGE" value="scheduling_v2" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom" timestamp="1594373479299">
+    <state width="2966" height="544" key="GridCell.Tab.0.bottom" timestamp="1594605354977">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594373479299" />
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594349560828" />
+    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594605354977" />
+    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594391484726" />
     <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510573" />
-    <state width="2966" height="544" key="GridCell.Tab.0.center" timestamp="1594373479298">
+    <state width="2966" height="544" key="GridCell.Tab.0.center" timestamp="1594605354975">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594373479298" />
-    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594349560827" />
+    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594605354975" />
+    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594391484725" />
     <state width="2966" height="544" key="GridCell.Tab.0.center/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510572" />
-    <state width="2966" height="544" key="GridCell.Tab.0.left" timestamp="1594373479297">
+    <state width="2966" height="544" key="GridCell.Tab.0.left" timestamp="1594605354975">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594373479297" />
-    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594349560826" />
+    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594605354975" />
+    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594391484724" />
     <state width="2966" height="544" key="GridCell.Tab.0.left/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510572" />
-    <state width="2966" height="544" key="GridCell.Tab.0.right" timestamp="1594373479299">
+    <state width="2966" height="544" key="GridCell.Tab.0.right" timestamp="1594605354976">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594373479299" />
-    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594349560828" />
+    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594605354976" />
+    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594391484726" />
     <state width="2966" height="544" key="GridCell.Tab.0.right/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510573" />
-    <state x="1005" y="485" key="SettingsEditor" timestamp="1594144966537">
+    <state x="1005" y="485" key="SettingsEditor" timestamp="1594565230844">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state x="1005" y="485" key="SettingsEditor/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594144966537" />
-    <state x="1104" y="586" key="Vcs.Push.Dialog.v2" timestamp="1594372881653">
+    <state x="1005" y="485" key="SettingsEditor/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594565230844" />
+    <state x="1104" y="586" key="Vcs.Push.Dialog.v2" timestamp="1594390145951">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state x="1104" y="586" key="Vcs.Push.Dialog.v2/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594372881653" />
+    <state x="1104" y="586" key="Vcs.Push.Dialog.v2/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594390145951" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/DEMO$test.coverage" NAME="test Coverage Results" MODIFIED="1594571125716" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/DEMO$scheduling.coverage" NAME="scheduling Coverage Results" MODIFIED="1594373363281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/DEMO$scheduling_v2.coverage" NAME="scheduling_v2 Coverage Results" MODIFIED="1594373479291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DEMO$scheduling_v2.coverage" NAME="scheduling_v2 Coverage Results" MODIFIED="1594605378799" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
