@@ -29,10 +29,14 @@ python3 meanfield.py --cuda --gpus 0 --batchSize 32 --rewardType se2 --obStyle p
 
 
 
-python3 meanfield.py --cuda --gpus 3 --batchSize 32 --rewardType se2 --obStyle primitive --agentType MF --obId&
-python3 meanfield.py --cuda --gpus 1 --batchSize 32 --rewardType se2 --obStyle primitive --agentType MF  --obId --curriculum&
-python3 meanfield.py --cuda --gpus 2 --batchSize 32 --rewardType se2 --obStyle primitive --agentType MF  &
-python3 meanfield.py --cuda --gpus 0 --batchSize 32 --rewardType se2 --obStyle primitive --agentType MF  --obId --curriculum --curriculumMemory share&
+python3 meanfield.py --cuda --gpus 3 --batchSize 32 --rewardType se2 --obStyle lstm --agentType MF --obId&
+python3 meanfield.py --cuda --gpus 1 --batchSize 32 --rewardType se2 --obStyle lstm --agentType MF  --obId --curriculum&
+python3 meanfield.py --cuda --gpus 2 --batchSize 32 --rewardType se2 --obStyle lstm --agentType MF  &
+python3 meanfield.py --cuda --gpus 0 --batchSize 32 --rewardType se2 --obStyle lstm --agentType MF  --obId --curriculum --curriculumMemory share&
+
+
+python3 meanfield.py --cuda --gpus 2 --batchSize 32 --rewardType se2 --etl 300 --obId&
+python3 meanfield.py --cuda --gpus 2 --batchSize 32 --rewardType se2 --etl 600 --obId&
 
 
 python3 meanfield.py --cuda --gpus 1 --batchSize 32 --rewardType se2 --obStyle primitive --obId&
