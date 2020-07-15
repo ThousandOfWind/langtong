@@ -5,7 +5,17 @@ import csv
 
 DECISION_INTERVAL = 60
 
+def set_demand(m_id, o_id, quantity, materials):
+    mat = materials[m_id][o_id]
+    mat.add_demand(quantity)
+    # print(o_id, m_id, quantity, mat.demand)
 
+    for s, c in mat.bom:
+        if type(materials[s]) == dict:
+            set_demand(s, o_id, quantity * c, materials)
+        else:
+            materials[s].add_demand(c * quantity)
+    return
 
 class Material:
     def __init__(self, id: str, type:bool, bom, remain=float('inf')):
@@ -25,6 +35,7 @@ class Material:
         self.last_demand_refer = 0
         self.record = []
         self.bom = bom
+        self.bottom = 0
 
         self.init_remain = remain
         self.init_bom = copy.deepcopy(bom)
@@ -151,18 +162,18 @@ class Craft:
         for o_id in self.target_m.keys():
             for index, s in enumerate(self.source[o_id]):
                 if s[1] > 0:
-                    if type(materials[s[0]])==dict:
-                        source = materials[s[0]][o_id]
-                    else:
-                        source = materials[s[0]]
+                    source = materials[s[0]][o_id]
                     consume = min(s[1], source.remain)
 
                     source.consume(consume, self.d_id, time_step, std_out_type)
                     self.source[o_id][index][1] -= consume
-                    source.add_demand_refer(consume)
+
                     if self.source[o_id][index][1] > 0:
                         flag = False
-                        source.add_demand(self.source[o_id][index][1])
+                        print(s[0], s[1], source.remain)
+
+                        source.add_demand_refer(consume)
+                        set_demand(s[0], o_id, self.source[o_id][index][1], materials)
         return flag
 
 
@@ -478,7 +489,7 @@ class Stage:
         for index, action in enumerate(self.index_to_action[:-1]):
             m = self.materials[action['m_id']][action['o_id']]
             state[0,index], state[1,index] = m.state()
-            need[index] = 1 if m.demand > 0 else 0
+            need[index] = 1 if state[0,index] > 0 else 0
         return state.reshape(-1), need
 
     def stage_sequantial_step(self, agents, memoryBuffer, clock, t, materials, std_out_type, reward_rule, e=0):
