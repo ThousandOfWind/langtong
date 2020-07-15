@@ -43,6 +43,7 @@ class QLearner:
         device = th.device("cuda" if th.cuda.is_available() else "cpu")
         obs = th.FloatTensor(obs).to(device).reshape(1,-1)
         former_act_prob = former_act_prob.to(device).reshape(1,-1)
+        # print(lio)
         lio = th.FloatTensor(lio).to(device).reshape(1,-1)
 
         q = self.Q(obs, lio, former_act_prob)

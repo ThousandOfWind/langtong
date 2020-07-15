@@ -117,7 +117,7 @@ class MemoryBuffer:
         batch['next_obs'] = th.FloatTensor(batch["next_obs"]).to(device)
         batch['next_avail_action'] = th.FloatTensor(batch["next_avail_action"]).to(device)
         batch['last_iobs'] = th.FloatTensor(batch["last_iobs"]).to(device)
-        # batch['iobs'] = th.FloatTensor(batch["iobs"]).to(device)                                                                      :-1]
+        # batchaction_index['iobs'] = th.FloatTensor(batch["iobs"]).to(device)                                                                      :-1]
         return batch
 
     def get_current(self, d_id, item,  map=None):
