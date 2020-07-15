@@ -5,7 +5,7 @@ import torch
 import random
 import numpy as np
 
-from MDP.modules_v2 import DECISION_INTERVAL
+from MDP.modules_v3 import DECISION_INTERVAL
 from data.read import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, generate_virtual_order
 from Controller.agents import init_Agents
 from MemoryBuffer.Memory import MemoryBuffer
@@ -32,15 +32,15 @@ parser.add_argument("--delay", type=int, default=1, help="extend time for produc
 parser.add_argument("--hiddenDim", type=int, default=64, help="hidden dim of network. Default=64")
 parser.add_argument("--hiddenLay", type=int, default=2, help="hidden layer of network. Default=2")
 parser.add_argument("--fakeOBR", type=float, default=0.5, help="fake order boost ratio")
-parser.add_argument("--fakeOBTL", type=int, default=500, help="fake order boost time_length")
+parser.add_argument("--fakeOBTL", type=int, default=0, help="fake order boost time_length")
 parser.add_argument("--fakeStyle", type=str, default='linear', help="fix / linear")
 parser.add_argument("--obStyle", type=str, default='primitive', help="primitive, concat, lstm")
 
 
 Peice = 60 * 8
 Day = 3
-TIMELIMIT = 7 * 24 * 60
-
+# TIMELIMIT = 7 * 24 * 60
+TIMELIMIT = 3000
 
 def tToClock(t):
     p = t // Peice
@@ -244,5 +244,5 @@ if __name__ == '__main__':
 
     param_set['path'] = path
 
-    # for _ in range(param_set['n_epochs']):
-    #     run(param_set)
+    for _ in range(param_set['n_epochs']):
+        run(param_set)

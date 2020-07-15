@@ -1,4 +1,4 @@
-from MDP.modules_v2 import Material, Craft, Device, Stage
+from MDP.modules_v3 import Material, Craft, Device, Stage
 import pandas as pd
 import numpy as np
 import random as rd

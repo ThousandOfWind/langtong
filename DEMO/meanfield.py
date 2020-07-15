@@ -5,7 +5,7 @@ import torch
 import random
 import numpy as np
 
-from MDP.modules_v2 import DECISION_INTERVAL
+from MDP.modules_v3 import DECISION_INTERVAL
 from data.read import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, curriculum_order
 from Controller.curriculum_schdule import CURs
 from data.create_map import Equipment_Relation_Map
