@@ -45,7 +45,6 @@ def available_actions(d_id, remain, scheduled):
     avail_actions = []
     device = DEVICE[d_id]
     for m_id, m_craft in device.crafts.items():
-        avail_actions_craft = []
         craft = device.crafts[m_id]
         for o_id in craft.source.keys():
             if DEMAND[m_id][o_id] > scheduled[m_id][o_id] * 1.0001:
@@ -58,7 +57,7 @@ def available_actions(d_id, remain, scheduled):
                             break
                 if flag == 1:
                     avail_actions.append(
-                        [m_id, o_id, required_production_time, required_production_time * craft.productivity])
+                        [m_id, o_id, required_production_time, required_production_time * craft.productivity, scheduled[m_id][o_id]])
     return avail_actions
 
 def produce(remain, m_id, o_id, d_id, time):
@@ -94,6 +93,7 @@ def schedule(current_time, remain, scheduled, device_states,current_plan):
                              state[0] == -1 and state[3] > DEVICE[d_id].crafts[
                                  state[1]].changeTime) or (state[1] == "None" and state[0] == -1):  # 可安排生产,选取最优生产:
             actions = available_actions(d_id, remain, scheduled)
+            actions.sort(key=lambda a: a[3])
             if not actions:  # 无可生产项目，等待
                 if state[0] == 0:  # 原本在待安排状态
                     child_states = copy.deepcopy(device_states)
