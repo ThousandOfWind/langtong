@@ -71,7 +71,9 @@ class Material:
         if std_out_type['matrial']:
             print('\t', 'consume from', str(self))
 
-        # if delta > self.remain:
+        # 忽略由于浮点数导致的问题
+        if delta > self.remain:
+            delta = self.remain
         #     print(ts, id, -delta, str(self))
 
         self.remain -= delta
