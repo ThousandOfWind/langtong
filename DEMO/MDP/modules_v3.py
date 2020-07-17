@@ -54,7 +54,7 @@ class Material:
 
     def __str__(self):
         s = 'Material:' + self.id + ' remain ' + str(self.remain) + ' demand ' + str(self.demand) \
-            + ' this step produce' + str(self.product_refer) + ' last step conmsume ' + str(self.last_demand_refer)
+            + ' this step produce ' + str(self.product_refer) + ' last step conmsume ' + str(self.last_demand_refer)
         return s
 
     def produce(self, delta: int, id, ts, std_out_type):
@@ -71,8 +71,8 @@ class Material:
         if std_out_type['matrial']:
             print('\t', 'consume from', str(self))
 
-        if delta > self.remain:
-            print(ts, id, -delta, str(self))
+        # if delta > self.remain:
+        #     print(ts, id, -delta, str(self))
 
         self.remain -= delta
 
@@ -178,6 +178,7 @@ class Craft:
                 source = materials[s_id][o_id]
             else:
                 source = materials[s_id]
+
             source.consume(t * com * self.productivity, self.d_id, time_step, std_out_type)
             source.add_demand_refer(t * com * self.productivity)
         return t * self.productivity
