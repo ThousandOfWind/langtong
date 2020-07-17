@@ -5,7 +5,17 @@ import csv
 
 DECISION_INTERVAL = 60
 
+def set_demand(m_id, o_id, quantity, materials):
+    mat = materials[m_id][o_id]
+    mat.add_demand(quantity)
+    # print(o_id, m_id, quantity, mat.demand, mat.state())
 
+    for s, c in mat.bom:
+        if type(materials[s]) == dict:
+            set_demand(s, o_id, quantity * c, materials)
+        else:
+            materials[s].add_demand(c * quantity)
+    return
 
 class Material:
     def __init__(self, id: str, type:bool, bom, remain=float('inf')):
@@ -25,6 +35,7 @@ class Material:
         self.last_demand_refer = 0
         self.record = []
         self.bom = bom
+        self.bottom = None
 
         self.init_remain = remain
         self.init_bom = copy.deepcopy(bom)
@@ -43,7 +54,7 @@ class Material:
 
     def __str__(self):
         s = 'Material:' + self.id + ' remain ' + str(self.remain) + ' demand ' + str(self.demand) \
-            + ' this step produce' + str(self.product_refer) + ' last step conmsume ' + str(self.last_demand_refer)
+            + ' this step produce ' + str(self.product_refer) + ' last step conmsume ' + str(self.last_demand_refer)
         return s
 
     def produce(self, delta: int, id, ts, std_out_type):
@@ -60,8 +71,10 @@ class Material:
         if std_out_type['matrial']:
             print('\t', 'consume from', str(self))
 
+        # 忽略由于浮点数导致的问题
         if delta > self.remain:
-            print(ts, id, -delta, str(self))
+            delta = self.remain
+        #     print(ts, id, -delta, str(self))
 
         self.remain -= delta
 
@@ -83,7 +96,11 @@ class Material:
         self.demand = self.demand_refer = self.product_refer = 0
 
     def state(self):
-        return [self.demand - self.remain - self.product_refer, self.last_demand_refer-self.product_refer]
+        real = self.demand - self.remain - self.product_refer
+        # if not self.bottom is None and self.demand > 0:
+        #     real = max(self.bottom[0], real)
+        refer = self.last_demand_refer - self.product_refer
+        return [real, refer]
 
 class Craft:
     def __init__(self, d_id: str, m_id: str, target, changeTime: int):
@@ -117,16 +134,26 @@ class Craft:
         """
         ret = {}
         for o_id in self.source.keys():
+            t = float('inf')
             for s, com in self.source[o_id]:
                 if type(materials[s]) == dict:
                     source = materials[s][o_id]
                 else:
                     source = materials[s]
-                real_com = com * self.productivity
-                if real_com * time > source.remain:
-                    ret[o_id] = (self.productivity * DECISION_INTERVAL, 0, 0)
-                    break
+
+                t = min(t, source.remain / (self.productivity * com))
+                # real_com = com * self.productivity
+                # if real_com * time > source.remain:
+                #     ret[o_id] = (self.productivity * DECISION_INTERVAL, 0, 0)
+                #     break
+
+            if t >= time:
                 ret[o_id] = ([self.productivity * DECISION_INTERVAL, self.productivity * time, 1])
+            elif self.productivity * t > materials[self.m_id][o_id].state()[0] > 0:
+                ret[o_id] = ([self.productivity * DECISION_INTERVAL, self.productivity * t, 1])
+            else:
+                ret[o_id] = (self.productivity * DECISION_INTERVAL, 0, 0)
+
         return ret
 
 
@@ -134,35 +161,48 @@ class Craft:
     def act(self, action, time, time_step, materials, std_out_type):
         if std_out_type['matrial']:
             print(self.d_id, 'act', self.m_id, action['o_id'])
-        target= self.target_m[action['o_id']]
+
+        o_id = action['o_id']
+        target= self.target_m[o_id]
         target.produce(time * self.productivity, self.d_id, time_step, std_out_type)
 
-        for s_id, com in self.source[action['o_id']]:
+
+        t = time
+        for s, com in self.source[o_id]:
+            if type(materials[s]) == dict:
+                source = materials[s][o_id]
+            else:
+                source = materials[s]
+            t = min(t, source.remain / (self.productivity * com))
+
+        for s_id, com in self.source[o_id]:
             if type(materials[s_id]) == dict:
-                source = materials[s_id][action['o_id']]
+                source = materials[s_id][o_id]
             else:
                 source = materials[s_id]
-            source.consume(time * com * self.productivity, self.d_id, time_step, std_out_type)
-            source.add_demand_refer(time * com * self.productivity)
-        return time * self.productivity
+
+            source.consume(t * com * self.productivity, self.d_id, time_step, std_out_type)
+            source.add_demand_refer(t * com * self.productivity)
+        return t * self.productivity
 
     def order_act(self, time_step, materials, std_out_type):
         flag = True
         for o_id in self.target_m.keys():
             for index, s in enumerate(self.source[o_id]):
                 if s[1] > 0:
-                    if type(materials[s[0]])==dict:
-                        source = materials[s[0]][o_id]
-                    else:
-                        source = materials[s[0]]
+                    source = materials[s[0]][o_id]
                     consume = min(s[1], source.remain)
 
                     source.consume(consume, self.d_id, time_step, std_out_type)
                     self.source[o_id][index][1] -= consume
-                    source.add_demand_refer(consume)
+
                     if self.source[o_id][index][1] > 0:
                         flag = False
-                        source.add_demand(self.source[o_id][index][1])
+                        if std_out_type['matrial']:
+                            print('order', s[0], s[1], source.remain)
+
+                        source.add_demand_refer(consume)
+                        set_demand(s[0], o_id, self.source[o_id][index][1], materials)
         return flag
 
 
@@ -356,7 +396,7 @@ class Device:
 
 
 
-    def act(self, action_to_index, action, time_step, clock, materials, reward_rule, std_out_type):
+    def act(self, action, time_step, clock, materials, reward_rule, std_out_type):
         """
         :param action:
         :return: wait_time if change_craft
@@ -478,7 +518,7 @@ class Stage:
         for index, action in enumerate(self.index_to_action[:-1]):
             m = self.materials[action['m_id']][action['o_id']]
             state[0,index], state[1,index] = m.state()
-            need[index] = 1 if m.demand > 0 else 0
+            need[index] = 1 if state[0,index] > 0 else 0
         return state.reshape(-1), need
 
     def stage_sequantial_step(self, agents, memoryBuffer, clock, t, materials, std_out_type, reward_rule, e=0):
@@ -508,7 +548,7 @@ class Stage:
             action_index = agents.choose_action(obs=obs, available_action=available_action, t=t, d_id=device.id, episode=e, std_out_type=std_out_type, memory=memoryBuffer)
             action = self.index_to_action[action_index]
 
-            productivity = device.act(self.action_to_index, action, t, clock, materials, reward_rule, std_out_type)
+            productivity = device.act( action, t, clock, materials, reward_rule, std_out_type)
             # print(action_index, action, productivity)
 
 

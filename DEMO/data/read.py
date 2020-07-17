@@ -1,12 +1,15 @@
-from MDP.modules_v3 import Material, Craft, Device, Stage
+from MDP.modules_v3 import Material, Craft, Device, Stage, DECISION_INTERVAL
 import pandas as pd
 import numpy as np
 import random as rd
 
-device_pd=pd.read_csv('data/sample/device.csv',sep=',')  #    设备编号,班次
-craft_pd=pd.read_csv('data/sample/craft.csv',sep=',')  #  设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
-order_pd=pd.read_csv('data/sample/order.csv',sep=',')  # 订单编号        产品编号     产品量
-bom_pd=pd.read_csv('data/sample/bom.csv',sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+
+std_out = False
+
+device_pd = pd.read_csv('data/sample/device.csv', sep=',')  # 设备编号,班次
+craft_pd = pd.read_csv('data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+order_pd = pd.read_csv('data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
+bom_pd = pd.read_csv('data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
 
 MATERIAL = {}
 DEVICE = {}
@@ -15,6 +18,13 @@ STAGE_name = []
 
 STAGE_P_M = {}
 M_T_STAGE = {}
+
+Producing_Table = {}
+#物料，设备两个下标确定该设备生产该物料的产量
+Consuming_Table = {}
+#物料，设备两个下标确定（该设备消耗该物料的量，母件，订单号）（单位时间内）
+Max_Consume_Table = {}
+#物料一个下标确定消耗物料速度最快的设备以及其在DECISION_INTERVAL内的消耗量
 
 #初始化物料
 M_INIT = {}
@@ -57,7 +67,8 @@ del M_INIT
 
 print('# all materials')
 for s in MATERIAL.keys():
-    print(s, MATERIAL[s])
+    if std_out:
+        print(s, MATERIAL[s])
 
 D_INIT = {}
 STAGE_U_D = {}
@@ -93,6 +104,51 @@ for index, row in craft_pd.iterrows():
         D_INIT[d_id] = {}
     D_INIT[d_id][m_id] = craft
 
+    if m_id not in Producing_Table:
+        Producing_Table[m_id] = {}
+    Producing_Table[m_id][d_id] = p
+
+#将产量表排序
+for m_id in Producing_Table:
+    current_table = Producing_Table[m_id]
+    current_table = sorted(current_table.items(), key=lambda x: x[1], reverse=True)
+    Producing_Table[m_id] = current_table
+
+#构建消耗表
+for m_id in MATERIAL:
+    if type(MATERIAL[m_id]) == dict:
+        for o_id in MATERIAL[m_id]:
+            bom = MATERIAL[m_id][o_id].bom
+            for lower_level_material_info in bom:
+                lower_level_material = lower_level_material_info[0]
+                conosuming_rate = lower_level_material_info[1]
+                if lower_level_material not in Consuming_Table:
+                    Consuming_Table[lower_level_material] = {}
+                for d_id, p in Producing_Table[m_id]:
+                    if p == Producing_Table[m_id][0][1]:
+                        Consuming_Table[lower_level_material][d_id] = (p * conosuming_rate, m_id, o_id)
+                    else:
+                        break
+
+#构建最大消耗表，并将信信息加入MATERIAL
+for material in Consuming_Table:
+    current_table = Consuming_Table[material]
+    Consuming_Table[material] = sorted(current_table.items(), key=lambda x: x[1][0], reverse=True)
+    current_table = Consuming_Table[material]#这个是不是可以省略，我不是特别理解copy的问题，还是老老实实加上去了
+    for i in range(len(current_table)):
+        if current_table[i][1][0] == current_table[0][1][0]:
+            consumed = Consuming_Table[material][0][1][0] * DECISION_INTERVAL
+            if material not in Max_Consume_Table:
+                Max_Consume_Table[material] = []
+            Max_Consume_Table[material].append([Consuming_Table[material][i][0], (consumed, Consuming_Table[material][i][1][1], Consuming_Table[material][i][1][2])])
+            
+        else:
+            break
+    if type(MATERIAL[material]) == dict:
+        for o_id in MATERIAL[material]:
+            MATERIAL[material][o_id].bottom = (Max_Consume_Table[material][0][1][0], Max_Consume_Table[material][0][1][1])
+    else:
+        MATERIAL[material].bottom = (Max_Consume_Table[material][0][1][0], Max_Consume_Table[material][0][1][1])
 
 #初始化设备
 # operation = {
@@ -106,7 +162,8 @@ for index, row in craft_pd.iterrows():
 
 print('# all device')
 for d_id in D_INIT:
-    print(d_id, D_INIT[d_id])
+    if std_out:
+        print(d_id, D_INIT[d_id])
     DEVICE[d_id] = Device(id=d_id, crafts=D_INIT[d_id])
 
 #初始化阶段
@@ -119,7 +176,8 @@ for stage in STAGE_U_D.keys():
 
 print('# all stage')
 for s_id in STAGE.keys():
-    print(STAGE[s_id])
+    if std_out:
+        print(STAGE[s_id])
 
 #初始化订单
 
@@ -134,49 +192,53 @@ def get_oder():
 
     order_craft = Craft(d_id='order', m_id='order', target=(orderML, 1), changeTime=0)
     return orderML, order_craft
-
-# 形成有向无环图
-edge = {}
-count = {s_id:0 for s_id in STAGE_P_M.keys()}
-for stage in STAGE_P_M.keys():
-    if not stage in edge.keys():
-        edge[stage] = []
-    for m in STAGE_P_M[stage]:
-        material = list(MATERIAL[m].values())[0]
-        for source, _ in material.bom:
-            if source in M_T_STAGE.keys():
-                source_stage = M_T_STAGE[source]
-                if not source_stage in edge[stage]:
-                    edge[stage].append(source_stage)
-                    count[source_stage] += 1
-
-print('# 工序产品依赖')
-for s_id in count.keys():
-    print(s_id, edge[s_id], count[s_id])
-
-print('# 工序顺序')
-while True:
-    flag = True
-    for s_id in count.keys():
-        if count[s_id] == 0:
-            break
-    if count[s_id] > 0:
-        print('error in construct graph!')
-        break
-    for next_s in edge[s_id]:
-        count[next_s] -= 1
-    STAGE_name.append(s_id)
-    del count[s_id]
-    if len(count) == 0:
-        print('stage seq:', STAGE_name)
-        break
-
-print('# 冲突设备')
-for index, s1_id in enumerate(STAGE_name[:-1]):
-    for s2_id in STAGE_name[index+1:]:
-        co_devices = set(STAGE[s1_id].devices) & set(STAGE[s2_id].devices)
-        if len(co_devices):
-            print(s1_id,s2_id, '存在冲突设备',[d.id for d in co_devices])
+#
+# # 形成有向无环图
+# edge = {}
+# count = {s_id:0 for s_id in STAGE_P_M.keys()}
+# for stage in STAGE_P_M.keys():
+#     if not stage in edge.keys():
+#         edge[stage] = []
+#     for m in STAGE_P_M[stage]:
+#         material = list(MATERIAL[m].values())[0]
+#         for source, _ in material.bom:
+#             if source in M_T_STAGE.keys():
+#                 source_stage = M_T_STAGE[source]
+#                 if not source_stage in edge[stage]:
+#                     edge[stage].append(source_stage)
+#                     count[source_stage] += 1
+#
+# print('# 工序产品依赖')
+# for s_id in count.keys():
+#     if std_out:
+#         print(s_id, edge[s_id], count[s_id])
+#
+# print('# 工序顺序')
+# while True:
+#     flag = True
+#     for s_id in count.keys():
+#         if count[s_id] == 0:
+#             break
+#     if count[s_id] > 0:
+#         if std_out:
+#             print('error in construct graph!')
+#         break
+#     for next_s in edge[s_id]:
+#         count[next_s] -= 1
+#     STAGE_name.append(s_id)
+#     del count[s_id]
+#     if len(count) == 0:
+#         if std_out:
+#             print('stage seq:', STAGE_name)
+#         break
+#
+# print('# 冲突设备')
+# for index, s1_id in enumerate(STAGE_name[:-1]):
+#     for s2_id in STAGE_name[index+1:]:
+#         co_devices = set(STAGE[s1_id].devices) & set(STAGE[s2_id].devices)
+#         if len(co_devices):
+#             if std_out:
+#                 print(s1_id,s2_id, '存在冲突设备',[d.id for d in co_devices])
 
 
 # DEVICE_cloud = []
@@ -256,7 +318,8 @@ for stage in Artificial_STAGE_name:
 
 print('# all Artificial STAGE')
 for s_id in Artificial_STAGE_name:
-    print(Artificial_STAGE[s_id])
+    if std_out:
+        print(Artificial_STAGE[s_id])
 
 
 def generate_virtual_order(level):
@@ -281,3 +344,16 @@ def curriculum_order(mask,ratio):
         orderml[o_id] = Material(id='order', type=True, bom=[[m_id, quatity], ])
     order_craft = Craft(d_id='order', m_id='order', target=(orderml, 1), changeTime=0)
     return orderml, order_craft
+
+
+for m_id in MATERIAL:
+    #print(Max_Consume_Table[material])
+    if type(MATERIAL[m_id]) == dict:
+        for o_id in MATERIAL[m_id]:
+            material = MATERIAL[m_id][o_id]
+            if std_out:
+                print(o_id, m_id, material.bottom)
+    else:
+        material = MATERIAL[m_id]
+        if std_out:
+            print(o_id, m_id, material.bottom)

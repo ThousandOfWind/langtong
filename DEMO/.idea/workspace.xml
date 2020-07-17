@@ -19,17 +19,100 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c11e6cf-ff4d-4ea9-9c57-62c50cb47418" name="Default Changelist" comment="scheduling_v2">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="8c11e6cf-ff4d-4ea9-9c57-62c50cb47418" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/朗通.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/朗通.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/read2.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/read2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scheduling_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/scheduling_v2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MDP/modules_v3.py" beforeDir="false" afterPath="$PROJECT_DIR$/MDP/modules_v3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clear.sh" beforeDir="false" afterPath="$PROJECT_DIR$/clear.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.sh" beforeDir="false" afterPath="$PROJECT_DIR$/train.sh" afterDir="false" />
     </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data/read.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1050">
+              <caret line="70" column="8" selection-start-line="70" selection-start-column="8" selection-end-line="70" selection-end-column="8" />
+              <folding>
+                <element signature="e#0#72#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/run.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1473">
+              <caret line="123" column="35" selection-start-line="123" selection-start-column="35" selection-end-line="123" selection-end-column="35" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/meanfield.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-3769">
+              <caret line="21" column="44" selection-start-line="21" selection-start-column="44" selection-end-line="21" selection-end-column="50" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MDP/modules_v3.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="428">
+              <caret line="73" selection-start-line="73" selection-end-line="74" selection-end-column="46" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+                <element signature="e#10626#13189#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/train.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/clear.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="285">
+              <caret line="19" column="10" lean-forward="true" selection-start-line="19" selection-start-column="10" selection-end-line="19" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MemoryBuffer/Memory.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="151">
+              <caret line="16" column="20" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -42,6 +125,11 @@
     <findStrings>
       <find>produce</find>
       <find>product_refer</find>
+      <find>DECISION_INTERVAL</find>
+      <find>str(</find>
+      <find>print</find>
+      <find>consume</find>
+      <find>__str__</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -53,8 +141,60 @@
       </map>
     </option>
   </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/meanfield.py" />
+        <option value="$PROJECT_DIR$/MemoryBuffer/MemoryEpisodic.py" />
+        <option value="$PROJECT_DIR$/Controller/RL/MF_learner_Counterparts.py" />
+        <option value="$PROJECT_DIR$/run.py" />
+        <option value="$PROJECT_DIR$/data/read.py" />
+        <option value="$PROJECT_DIR$/MDP/modules_v3.py" />
+        <option value="$PROJECT_DIR$/clear.sh" />
+        <option value="$PROJECT_DIR$/train.sh" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="width" value="1440" />
+    <option name="height" value="900" />
+  </component>
   <component name="ProjectId" id="1eIsfGPAqpfgKsHyC5nrLk0xiut" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DEMO" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DEMO" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DEMO" type="462c0819:PsiDirectoryNode" />
+              <item name="MDP" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DEMO" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DEMO" type="462c0819:PsiDirectoryNode" />
+              <item name="MemoryBuffer" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -78,7 +218,19 @@
       <recent name="$PROJECT_DIR$/data" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.scheduling_v2">
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.run">
     <configuration name="meanfield" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="朗通" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -101,6 +253,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="read" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="朗通" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/read.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="run" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="朗通" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -113,30 +286,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/run.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="scheduling" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="朗通" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scheduling.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -191,11 +341,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.scheduling_v2" />
         <item itemvalue="Python.run" />
+        <item itemvalue="Python.read" />
         <item itemvalue="Python.meanfield" />
+        <item itemvalue="Python.scheduling_v2" />
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.scheduling" />
       </list>
     </recent_temporary>
   </component>
@@ -214,12 +364,7 @@
       <workItem from="1594093410330" duration="18033000" />
       <workItem from="1594348464972" duration="7717000" />
       <workItem from="1594362548186" duration="10127000" />
-      <workItem from="1594517775742" duration="7632000" />
-      <workItem from="1594621740347" duration="700000" />
-      <workItem from="1594709273889" duration="1259000" />
-      <workItem from="1594797854106" duration="1253000" />
-      <workItem from="1594949718942" duration="509000" />
-      <workItem from="1594956842614" duration="7689000" />
+      <workItem from="1594517775742" duration="7514000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <created>1591322778941</created>
@@ -347,22 +492,56 @@
       <option name="project" value="LOCAL" />
       <updated>1594605473798</updated>
     </task>
-    <task id="LOCAL-00019" summary="scheduling_v2">
-      <created>1594608901236</created>
+    <task id="LOCAL-00019" summary="update MDP">
+      <created>1594970395399</created>
       <option name="number" value="00019" />
       <option name="presentableId" value="LOCAL-00019" />
       <option name="project" value="LOCAL" />
-      <updated>1594608901236</updated>
+      <updated>1594970395399</updated>
     </task>
-    <task id="LOCAL-00020" summary="scheduling_v2">
-      <created>1594797888442</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1594797888442</updated>
-    </task>
-    <option name="localTasksCounter" value="21" />
+    <option name="localTasksCounter" value="20" />
     <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3120482" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3120482" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="2" />
@@ -372,7 +551,14 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -391,7 +577,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First Commit" />
@@ -399,49 +584,179 @@
     <MESSAGE value="schedule" />
     <MESSAGE value="scheduling" />
     <MESSAGE value="scheduling_v2" />
-    <option name="LAST_COMMIT_MESSAGE" value="scheduling_v2" />
+    <MESSAGE value="update MDP" />
+    <option name="LAST_COMMIT_MESSAGE" value="update MDP" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="1190" y="461" key="#scheduling_v2" timestamp="1594798017509">
+    <state width="2966" height="544" key="GridCell.Tab.0.bottom" timestamp="1594608536298">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state x="1190" y="461" key="#scheduling_v2/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594798017509" />
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom" timestamp="1594975214919">
+    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594608536298" />
+    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594391484726" />
+    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510573" />
+    <state width="2966" height="544" key="GridCell.Tab.0.center" timestamp="1594608536296">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594975214919" />
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594647517431" />
-    <state width="2966" height="544" key="GridCell.Tab.0.bottom/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594801326819" />
-    <state width="2966" height="544" key="GridCell.Tab.0.center" timestamp="1594975214918">
+    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594608536296" />
+    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594391484725" />
+    <state width="2966" height="544" key="GridCell.Tab.0.center/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510572" />
+    <state width="2966" height="544" key="GridCell.Tab.0.left" timestamp="1594608536296">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594975214918" />
-    <state width="2966" height="544" key="GridCell.Tab.0.center/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594647517430" />
-    <state width="2966" height="544" key="GridCell.Tab.0.center/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594801326817" />
-    <state width="2966" height="544" key="GridCell.Tab.0.left" timestamp="1594975214917">
+    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594608536296" />
+    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594391484724" />
+    <state width="2966" height="544" key="GridCell.Tab.0.left/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510572" />
+    <state width="2966" height="544" key="GridCell.Tab.0.right" timestamp="1594608536297">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594975214917" />
-    <state width="2966" height="544" key="GridCell.Tab.0.left/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594647517429" />
-    <state width="2966" height="544" key="GridCell.Tab.0.left/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594801326781" />
-    <state width="2966" height="544" key="GridCell.Tab.0.right" timestamp="1594975214918">
+    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594608536297" />
+    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594391484726" />
+    <state width="2966" height="544" key="GridCell.Tab.0.right/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594040510573" />
+    <state x="1005" y="485" key="SettingsEditor" timestamp="1594565230844">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594975214918" />
-    <state width="2966" height="544" key="GridCell.Tab.0.right/0.0.3008.1692/-144.1715.1792.1097@0.0.3008.1692" timestamp="1594647517431" />
-    <state width="2966" height="544" key="GridCell.Tab.0.right/0.23.3008.1669/-144.1715.1792.1097@0.23.3008.1669" timestamp="1594801326818" />
-    <state x="1005" y="485" key="SettingsEditor" timestamp="1594798044294">
+    <state x="1005" y="485" key="SettingsEditor/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594565230844" />
+    <state x="1104" y="586" key="Vcs.Push.Dialog.v2" timestamp="1594605485144">
       <screen x="0" y="0" width="3008" height="1692" />
     </state>
-    <state x="1005" y="485" key="SettingsEditor/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594798044294" />
-    <state x="1104" y="586" key="Vcs.Push.Dialog.v2" timestamp="1594797897117">
-      <screen x="0" y="0" width="3008" height="1692" />
-    </state>
-    <state x="1104" y="586" key="Vcs.Push.Dialog.v2/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594797897117" />
+    <state x="1104" y="586" key="Vcs.Push.Dialog.v2/0.0.3008.1692/-144.1692.1792.1120@0.0.3008.1692" timestamp="1594605485144" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/MDP/modules_v3.py</url>
+          <line>73</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/DEMO$test.coverage" NAME="test Coverage Results" MODIFIED="1594571125716" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/DEMO$scheduling.coverage" NAME="scheduling Coverage Results" MODIFIED="1594373363281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/DEMO$scheduling_v2.coverage" NAME="scheduling_v2 Coverage Results" MODIFIED="1594975318153" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DEMO$scheduling_v2.coverage" NAME="scheduling_v2 Coverage Results" MODIFIED="1594608765547" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/MDP/reward.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDP/modules_v2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/dqn_learner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="900">
+          <caret line="68" column="59" selection-start-line="68" selection-start-column="59" selection-end-line="68" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MemoryBuffer/MemoryEpisodic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1620">
+          <caret line="108" column="34" selection-start-line="108" selection-start-column="34" selection-end-line="108" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MemoryBuffer/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller/RL/MF_learner_Counterparts.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="46" column="20" selection-start-line="46" selection-start-column="20" selection-end-line="46" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/read2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3480">
+          <caret line="5" selection-start-line="5" selection-end-line="8" selection-end-column="92" />
+          <folding>
+            <element signature="e#0#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MemoryBuffer/Memory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="151">
+          <caret line="16" column="20" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/read.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1050">
+          <caret line="70" column="8" selection-start-line="70" selection-start-column="8" selection-end-line="70" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#72#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDP/modules_v3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="428">
+          <caret line="73" selection-start-line="73" selection-end-line="74" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#10626#13189#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1473">
+          <caret line="123" column="35" selection-start-line="123" selection-start-column="35" selection-end-line="123" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/meanfield.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3769">
+          <caret line="21" column="44" selection-start-line="21" selection-start-column="44" selection-end-line="21" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/clear.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="10" lean-forward="true" selection-start-line="19" selection-start-column="10" selection-end-line="19" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/train.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
   </component>
 </project>

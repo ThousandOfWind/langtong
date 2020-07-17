@@ -11,7 +11,7 @@ function getdir()
         else
             fsize=`cat $dir_or_file | wc -l`
             echo $dir_or_file":"$fsize
-            if [ $fsize -lt 20000 ]
+            if [ $fsize -lt 2000 ]
             then
                 echo "remove it"
                 rm -rf $dir_or_file
