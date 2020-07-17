@@ -1,12 +1,13 @@
-from MDP.modules_v3 import Material, Craft, Device, Stage
+from modules_v3 import Material, Craft, Device, Stage, DECISION_INTERVAL
 import pandas as pd
 import numpy as np
 import random as rd
 
-device_pd=pd.read_csv('data/sample/device.csv',sep=',')  #    设备编号,班次
-craft_pd=pd.read_csv('data/sample/craft.csv',sep=',')  #  设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
-order_pd=pd.read_csv('data/sample/order.csv',sep=',')  # 订单编号        产品编号     产品量
-bom_pd=pd.read_csv('data/sample/bom.csv',sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+
+device_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/device.csv', sep=',')  # 设备编号,班次
+craft_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+order_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
+bom_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
 
 MATERIAL = {}
 DEVICE = {}
@@ -15,6 +16,13 @@ STAGE_name = []
 
 STAGE_P_M = {}
 M_T_STAGE = {}
+
+Producing_Table = {}
+#物料，设备两个下标确定该设备生产该物料的产量
+Consuming_Table = {}
+#物料，设备两个下标确定（该设备消耗该物料的量，母件，订单号）（单位时间内）
+Max_Consume_Table = {}
+#物料一个下标确定消耗物料速度最快的设备以及其在DECISION_INTERVAL内的消耗量
 
 #初始化物料
 M_INIT = {}
@@ -93,6 +101,51 @@ for index, row in craft_pd.iterrows():
         D_INIT[d_id] = {}
     D_INIT[d_id][m_id] = craft
 
+    if m_id not in Producing_Table:
+        Producing_Table[m_id] = {}
+    Producing_Table[m_id][d_id] = p
+
+#将产量表排序
+for m_id in Producing_Table:
+    current_table = Producing_Table[m_id]
+    current_table = sorted(current_table.items(), key=lambda x: x[1], reverse=True)
+    Producing_Table[m_id] = current_table
+
+#构建消耗表
+for m_id in MATERIAL:
+    if type(MATERIAL[m_id]) == dict:
+        for o_id in MATERIAL[m_id]:
+            bom = MATERIAL[m_id][o_id].bom
+            for lower_level_material_info in bom:
+                lower_level_material = lower_level_material_info[0]
+                conosuming_rate = lower_level_material_info[1]
+                if lower_level_material not in Consuming_Table:
+                    Consuming_Table[lower_level_material] = {}
+                for d_id, p in Producing_Table[m_id]:
+                    if p == Producing_Table[m_id][0][1]:
+                        Consuming_Table[lower_level_material][d_id] = (p * conosuming_rate, m_id, o_id)
+                    else:
+                        break
+
+#构建最大消耗表，并将信信息加入MATERIAL
+for material in Consuming_Table:
+    current_table = Consuming_Table[material]
+    Consuming_Table[material] = sorted(current_table.items(), key=lambda x: x[1][0], reverse=True)
+    current_table = Consuming_Table[material]#这个是不是可以省略，我不是特别理解copy的问题，还是老老实实加上去了
+    for i in range(len(current_table)):
+        if current_table[i][1][0] == current_table[0][1][0]:
+            consumed = Consuming_Table[material][0][1][0] * DECISION_INTERVAL
+            if material not in Max_Consume_Table:
+                Max_Consume_Table[material] = []
+            Max_Consume_Table[material].append([Consuming_Table[material][i][0], (consumed, Consuming_Table[material][i][1][1], Consuming_Table[material][i][1][2])])
+            
+        else:
+            break
+    if type(MATERIAL[material]) == dict:
+        for o_id in MATERIAL[material]:
+            MATERIAL[material][o_id].bottom = (Max_Consume_Table[material][0][1][0], Max_Consume_Table[material][0][1][1])
+    else:
+        MATERIAL[material].bottom = (Max_Consume_Table[material][0][1][0], Max_Consume_Table[material][0][1][1])
 
 #初始化设备
 # operation = {
@@ -281,3 +334,16 @@ def curriculum_order(mask,ratio):
         orderml[o_id] = Material(id='order', type=True, bom=[[m_id, quatity], ])
     order_craft = Craft(d_id='order', m_id='order', target=(orderml, 1), changeTime=0)
     return orderml, order_craft
+
+
+for m_id in MATERIAL:
+    #print(Max_Consume_Table[material])
+    if type(MATERIAL[m_id]) == dict:
+        for o_id in MATERIAL[m_id]:
+            material = MATERIAL[m_id][o_id]
+            if material.bottom != ():
+                print('物料{m_id}的最大消耗量（{t}min内）为{p},母件为：{p_id}'.format(m_id=m_id, t=DECISION_INTERVAL, p_id=material.bottom[1], p=material.bottom[0]))
+    else:
+        material = MATERIAL[m_id]
+        if material.bottom != ():
+            print('物料{m_id}的最大消耗量（{t}min内）为{p},母件为：{p_id}'.format(m_id=m_id, t=DECISION_INTERVAL, p_id=material.bottom[1], p=material.bottom[0]))
