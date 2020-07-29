@@ -1,12 +1,12 @@
-from MDP.modules_vx import Material, Craft, Device, Stage
+from modules_vx import Material, Craft, Device, Stage
 import pandas as pd
 import numpy as np
 import random as rd
 
-device_pd = pd.read_csv('data/sample/device.csv', sep=',')  # 设备编号,班次
-craft_pd = pd.read_csv('data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
-order_pd = pd.read_csv('data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
-bom_pd = pd.read_csv('data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+device_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/device.csv', sep=',')  # 设备编号,班次
+craft_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+order_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
+bom_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
 
 MATERIAL = {}
 DEVICE = {}
