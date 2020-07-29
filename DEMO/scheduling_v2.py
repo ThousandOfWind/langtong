@@ -1,7 +1,8 @@
-from data.read2 import MATERIAL, DEVICE, get_oder
+from data.read2 import MATERIAL, DEVICE, get_oder, M_T_STAGE, NAMES
 import copy
 import sys
 import matplotlib.pyplot as plt
+import csv
 
 sys.setrecursionlimit(10000)
 DEMAND = {}  # 需求
@@ -9,9 +10,15 @@ REMAIN = {}  # 剩余
 SCHEDULED = {}  # 已安排的生产
 DEVICE_STATES = {}  # every value is a list: [设备生产此任务剩余时间(-1：等待中, 0:无任务，待安排, -2: 与 -1 相同，但跳过本次), 工艺m_id, 订单o_id, 已等待时间, 换线剩余时间]
 SEARCH_STEP = 10  # 时间粒度
-PRODUCTION_STEP = 30  # 生产划分粒度
+PRODUCTION_STEP = 60  # 生产划分粒度
 BEST_SO_FAR = float('inf')
 DEVICE_ID = list(DEVICE.keys())
+COLORS = {}  # 颜色
+COLOR_TYPES = [[255, 0, 0], [0, 0, 255], [0, 255, 0], [135, 135, 0], [0, 135, 135], [135, 0, 135]]
+FILE_NUM = 0
+headers = ['销售订单行号', '产品编码', '产品名称', '母件编码', '子件编码', '子件名称', '子工序', '子工序名称', '数量',
+           '子件编码对应的属性', '任务号', '前置任务号', '后置任务号', '开始时间', '完成时间', '设备编号']
+
 
 def gantt(plan):
     print(plan)
@@ -24,11 +31,29 @@ def gantt(plan):
             o_id = production[1]
             start_time = production[2]
             production_time = production[3]
-            plt.barh(DEVICE_ID[i], production_time, left=start_time)
+            plt.barh(DEVICE_ID[i], production_time, left=start_time, color=rgb_to_hex(COLORS[m_id][o_id]))
             plt.text(start_time, DEVICE_ID[i], '%s\n%s'%(m_id, o_id))
     plt.yticks(DEVICE_ID)
     plt.show()
     return
+
+
+def rgb_to_hex(color):
+    strn = '#'
+    for rgb in color:
+        strn += str(hex(rgb))[-2:].replace('x', '0').upper()
+    return strn
+
+
+def color_reduce(color):
+    ret = []
+    for rgb in color:
+        if rgb <= 215:
+            ret.append(rgb + 40)
+        else:
+            ret.append(rgb)
+    return ret
+
 
 def set_demand(m_id, o_id, quantity):
     mat = MATERIAL[m_id][o_id]
@@ -36,6 +61,9 @@ def set_demand(m_id, o_id, quantity):
     for source, amount in mat.bom:
         if float(amount) > 0:
             if type(MATERIAL[source]) == dict:
+                if source not in COLORS.keys():
+                    COLORS[source] = {}
+                COLORS[source][o_id] = color_reduce(COLORS[m_id][o_id])
                 set_demand(source, o_id, quantity * amount)
             else:
                 DEMAND[source] += quantity * amount
@@ -60,6 +88,7 @@ def available_actions(d_id, remain, scheduled):
                         [m_id, o_id, required_production_time, required_production_time * craft.productivity, scheduled[m_id][o_id]])
     return avail_actions
 
+
 def produce(remain, m_id, o_id, d_id, time):
     craft = DEVICE[d_id].crafts[m_id]
     remain[m_id][o_id] += craft.productivity * time
@@ -68,6 +97,33 @@ def produce(remain, m_id, o_id, d_id, time):
             remain[s][o_id] -= com * craft.productivity * time
             # if remain[s][o_id] < 0:
             #     print("not enough material:", m_id, remain[s][o_id])
+
+
+def result_to_csv(plans):
+    global FILE_NUM
+    FILE_NUM += 1
+    rows = []
+    for dev_id, plan in plans.items():
+        device = DEVICE[dev_id]
+        for production in plan:
+            m_id = production[0]
+            craft = device.crafts[m_id]
+            o_id = production[1]
+            start_time = production[2]
+            duration = production[3]
+            finish_time = duration + start_time
+            for source, amount in craft.source[o_id]:
+                if type(MATERIAL[source]) == dict:
+                    s_type = '半成品'
+                else:
+                    s_type = '原材料'
+                rows.append([o_id, orderML[o_id].bom[0][0], NAMES[orderML[o_id].bom[0][0]], m_id, NAMES[m_id], source, NAMES[source], M_T_STAGE[m_id], duration * amount, s_type, 0, 0, 0, start_time, finish_time, dev_id])
+    with open('result' + str(FILE_NUM) + '.csv', 'w') as f:
+        f_csv = csv.writer(f)
+        f_csv.writerow(headers)
+        f_csv.writerows(rows)
+    print("write complete")
+
 
 def schedule(current_time, remain, scheduled, device_states,current_plan):
     global BEST_SO_FAR
@@ -86,6 +142,7 @@ def schedule(current_time, remain, scheduled, device_states,current_plan):
     if completed == 1:
         print("complete", current_time)
         gantt(current_plan)
+        result_to_csv(current_plan)
         return current_time, {}
 
     for d_id, state in device_states.items():
@@ -186,8 +243,15 @@ for m_id in MATERIAL.keys():
     else:
         DEMAND[m_id] = 0
 
+c = 0
 for o_id, order_mat in orderML.items():
+    if order_mat.bom[0][0] not in COLORS.keys():
+        COLORS[order_mat.bom[0][0]] = {}
+    COLORS[order_mat.bom[0][0]][ o_id] = COLOR_TYPES[c]
+    c += 1
     set_demand(order_mat.bom[0][0], o_id, order_mat.bom[0][1])
+
+print(COLORS)
 
 for d_id in DEVICE.keys():
     DEVICE_STATES[d_id] = [0, "None", "None", 0, 0]

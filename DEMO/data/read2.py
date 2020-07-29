@@ -1,23 +1,34 @@
-from modules_vx import Material, Craft, Device, Stage
+from MDP.modules_vx import Material, Craft, Device, Stage
 import pandas as pd
 import numpy as np
 import random as rd
 
-device_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/device.csv', sep=',')  # 设备编号,班次
-craft_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
-order_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
-bom_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+device_pd = pd.read_csv('data/sample/device.csv', sep=',')  # 设备编号,班次
+craft_pd = pd.read_csv('data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+order_pd = pd.read_csv('data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
+bom_pd = pd.read_csv('data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+product_pd = pd.read_csv('data/sample/products.csv', sep=',')
 
 MATERIAL = {}
 DEVICE = {}
 STAGE = {}
 STAGE_name = []
-
+NAMES = {}
 STAGE_P_M = {}
 M_T_STAGE = {}  # 母件 -> 子工序
 DEMAND = {}
 # 初始化物料
 M_INIT = {}
+
+for index, row in product_pd.iterrows():
+    c_id = str(row['子件编码'])
+    m_id = str(row['母件编码'])
+    c_name = str(row['子件名称'])
+    m_name = str(row['母件名称'])
+    NAMES[c_id] = c_name
+    NAMES[m_name] = m_name
+
+
 for index, row in bom_pd.iterrows():
     c_id = str(row['子件编码'])
     c = row['采购'] == '是'

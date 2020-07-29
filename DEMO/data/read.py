@@ -1,13 +1,15 @@
-from modules_v3 import Material, Craft, Device, Stage, DECISION_INTERVAL
+from MDP.modules_v3 import Material, Craft, Device, Stage, DECISION_INTERVAL
 import pandas as pd
 import numpy as np
 import random as rd
 
 
-device_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/device.csv', sep=',')  # 设备编号,班次
-craft_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
-order_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
-bom_pd = pd.read_csv('c:/Users/xuean/Documents/GitHub/langtong/DEMO/data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+std_out = False
+
+device_pd = pd.read_csv('data/sample/device.csv', sep=',')  # 设备编号,班次
+craft_pd = pd.read_csv('data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+order_pd = pd.read_csv('data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
+bom_pd = pd.read_csv('data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
 
 MATERIAL = {}
 DEVICE = {}
@@ -65,7 +67,8 @@ del M_INIT
 
 print('# all materials')
 for s in MATERIAL.keys():
-    print(s, MATERIAL[s])
+    if std_out:
+        print(s, MATERIAL[s])
 
 D_INIT = {}
 STAGE_U_D = {}
@@ -159,7 +162,8 @@ for material in Consuming_Table:
 
 print('# all device')
 for d_id in D_INIT:
-    print(d_id, D_INIT[d_id])
+    if std_out:
+        print(d_id, D_INIT[d_id])
     DEVICE[d_id] = Device(id=d_id, crafts=D_INIT[d_id])
 
 #初始化阶段
@@ -172,7 +176,8 @@ for stage in STAGE_U_D.keys():
 
 print('# all stage')
 for s_id in STAGE.keys():
-    print(STAGE[s_id])
+    if std_out:
+        print(STAGE[s_id])
 
 #初始化订单
 
@@ -187,49 +192,53 @@ def get_oder():
 
     order_craft = Craft(d_id='order', m_id='order', target=(orderML, 1), changeTime=0)
     return orderML, order_craft
-
-# 形成有向无环图
-edge = {}
-count = {s_id:0 for s_id in STAGE_P_M.keys()}
-for stage in STAGE_P_M.keys():
-    if not stage in edge.keys():
-        edge[stage] = []
-    for m in STAGE_P_M[stage]:
-        material = list(MATERIAL[m].values())[0]
-        for source, _ in material.bom:
-            if source in M_T_STAGE.keys():
-                source_stage = M_T_STAGE[source]
-                if not source_stage in edge[stage]:
-                    edge[stage].append(source_stage)
-                    count[source_stage] += 1
-
-print('# 工序产品依赖')
-for s_id in count.keys():
-    print(s_id, edge[s_id], count[s_id])
-
-print('# 工序顺序')
-while True:
-    flag = True
-    for s_id in count.keys():
-        if count[s_id] == 0:
-            break
-    if count[s_id] > 0:
-        print('error in construct graph!')
-        break
-    for next_s in edge[s_id]:
-        count[next_s] -= 1
-    STAGE_name.append(s_id)
-    del count[s_id]
-    if len(count) == 0:
-        print('stage seq:', STAGE_name)
-        break
-
-print('# 冲突设备')
-for index, s1_id in enumerate(STAGE_name[:-1]):
-    for s2_id in STAGE_name[index+1:]:
-        co_devices = set(STAGE[s1_id].devices) & set(STAGE[s2_id].devices)
-        if len(co_devices):
-            print(s1_id,s2_id, '存在冲突设备',[d.id for d in co_devices])
+#
+# # 形成有向无环图
+# edge = {}
+# count = {s_id:0 for s_id in STAGE_P_M.keys()}
+# for stage in STAGE_P_M.keys():
+#     if not stage in edge.keys():
+#         edge[stage] = []
+#     for m in STAGE_P_M[stage]:
+#         material = list(MATERIAL[m].values())[0]
+#         for source, _ in material.bom:
+#             if source in M_T_STAGE.keys():
+#                 source_stage = M_T_STAGE[source]
+#                 if not source_stage in edge[stage]:
+#                     edge[stage].append(source_stage)
+#                     count[source_stage] += 1
+#
+# print('# 工序产品依赖')
+# for s_id in count.keys():
+#     if std_out:
+#         print(s_id, edge[s_id], count[s_id])
+#
+# print('# 工序顺序')
+# while True:
+#     flag = True
+#     for s_id in count.keys():
+#         if count[s_id] == 0:
+#             break
+#     if count[s_id] > 0:
+#         if std_out:
+#             print('error in construct graph!')
+#         break
+#     for next_s in edge[s_id]:
+#         count[next_s] -= 1
+#     STAGE_name.append(s_id)
+#     del count[s_id]
+#     if len(count) == 0:
+#         if std_out:
+#             print('stage seq:', STAGE_name)
+#         break
+#
+# print('# 冲突设备')
+# for index, s1_id in enumerate(STAGE_name[:-1]):
+#     for s2_id in STAGE_name[index+1:]:
+#         co_devices = set(STAGE[s1_id].devices) & set(STAGE[s2_id].devices)
+#         if len(co_devices):
+#             if std_out:
+#                 print(s1_id,s2_id, '存在冲突设备',[d.id for d in co_devices])
 
 
 # DEVICE_cloud = []
@@ -309,7 +318,8 @@ for stage in Artificial_STAGE_name:
 
 print('# all Artificial STAGE')
 for s_id in Artificial_STAGE_name:
-    print(Artificial_STAGE[s_id])
+    if std_out:
+        print(Artificial_STAGE[s_id])
 
 
 def generate_virtual_order(level):
@@ -341,9 +351,9 @@ for m_id in MATERIAL:
     if type(MATERIAL[m_id]) == dict:
         for o_id in MATERIAL[m_id]:
             material = MATERIAL[m_id][o_id]
-            if material.bottom != ():
-                print('物料{m_id}的最大消耗量（{t}min内）为{p},母件为：{p_id}'.format(m_id=m_id, t=DECISION_INTERVAL, p_id=material.bottom[1], p=material.bottom[0]))
+            if std_out:
+                print(o_id, m_id, material.bottom)
     else:
         material = MATERIAL[m_id]
-        if material.bottom != ():
-            print('物料{m_id}的最大消耗量（{t}min内）为{p},母件为：{p_id}'.format(m_id=m_id, t=DECISION_INTERVAL, p_id=material.bottom[1], p=material.bottom[0]))
+        if std_out:
+            print(o_id, m_id, material.bottom)
