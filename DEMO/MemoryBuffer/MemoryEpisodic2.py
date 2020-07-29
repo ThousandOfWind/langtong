@@ -74,28 +74,28 @@ class MemoryBuffer:
         for item in range(batchSize):
             b_id = random.randint(0, len(self.buffer)-1)
             for index, d_id in enumerate(idList):
-                batch['obs'][index] += copy.deepcopy(
-                    self.buffer[b_id][d_id]['obs'])
-                batch['reward'][index] += copy.deepcopy(
-                    self.buffer[b_id][d_id]['reward'])
-                batch['action'][index] += copy.deepcopy(
-                    self.buffer[b_id][d_id]['action_index'])
-                batch['done'][index] += ([0, ]*(len(self.buffer[b_id]
-                                                    [d_id]['action_index'])-1)+[1, ])
+                np.append(batch['obs'][index] ,copy.deepcopy(
+                    self.buffer[b_id][d_id]['obs']))
+                np.append(batch['reward'][index] , copy.deepcopy(
+                    self.buffer[b_id][d_id]['reward']))
+                np.append(batch['action'][index] , copy.deepcopy(
+                    self.buffer[b_id][d_id]['action_index']))
+                np.append(batch['done'][index] ,np.array(([0, ]*(len(self.buffer[b_id]
+                                                    [d_id]['action_index'])-1)+[1, ]))) 
                 next = copy.deepcopy(self.buffer[b_id][d_id]['obs'][1:])
-                next.append([0] * len(self.buffer[b_id][d_id]['obs'][0]))
-                batch['next_obs'][index] += next
+                np.append(next,np.array([0] * len(self.buffer[b_id][d_id]['obs'][0])))
+                np.append(batch['next_obs'][index], next)
                 next_avail = copy.deepcopy(
                     self.buffer[b_id][d_id]['available_action'][1:])
-                next_avail.append(
-                    [0] * len(self.buffer[b_id][d_id]['available_action'][0]))
-                batch['next_avail_action'][index] += (next_avail)
+                np.append(next_avail,np.array(
+                    [0] * len(self.buffer[b_id][d_id]['available_action'][0])))
+                np.append(batch['next_avail_action'][index] , (next_avail))
 
-                batch['iobs'][index] += copy.deepcopy(
-                    self.buffer[b_id][d_id]['immediately_obs'])
+                np.append(batch['iobs'][index] , copy.deepcopy(
+                    self.buffer[b_id][d_id]['immediately_obs']))
                 last_iobs = self.buffer[b_id][d_id]['immediately_obs'][0:1] + \
                     self.buffer[b_id][d_id]['immediately_obs'][:-1]
-                batch['last_iobs'][index] += copy.deepcopy(last_iobs)
+                np.append(batch['last_iobs'][index] , copy.deepcopy(last_iobs))
 
                 if mf:
                     device = th.device(
@@ -106,7 +106,7 @@ class MemoryBuffer:
                         self.buffer[b_id][d_id]['action_index']).to(device)
                     action[d_id][item] = one_hot.scatter(
                         1, action_index.unsqueeze(1), 1)
-
+        '''
         if mf:
             for index, d_id in enumerate(idList):
                 for item in range(batchSize):
@@ -130,6 +130,7 @@ class MemoryBuffer:
                 batch['mean_action'], dim=0).to(device)
             batch['last_mean_action'] = th.stack(
                 batch['last_mean_action'], dim=0).to(device)
+        '''
 
         batch['obs'] = th.FloatTensor(batch['obs']).to(device)
         batch['reward'] = th.FloatTensor(batch['reward']).to(device)
@@ -142,6 +143,7 @@ class MemoryBuffer:
         # batchaction_index['iobs'] = th.FloatTensor(batch["iobs"]).to(device)                                                                      :-1]
         return batch
 
+    '''
     def get_current(self, d_id, item,  map=None):
 
         if item == 'last_mean_action':
@@ -159,7 +161,7 @@ class MemoryBuffer:
             return True, self.current[d_id][item][-1]
         return False, None
 
-    '''def get_current_trajectory(self, d_id,  map=None):
+    def get_current_trajectory(self, d_id,  map=None):
         device = th.device("cuda" if th.cuda.is_available() else "cpu")
         if d_id in self.current:
             batch = {}
