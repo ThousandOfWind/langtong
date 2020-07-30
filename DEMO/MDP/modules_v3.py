@@ -529,11 +529,6 @@ class Stage:
         for index, device in enumerate(self.devices):
             stage_state, need = self.get_state()
             device_state, available_action = device.get_state(action_to_index=self.action_to_index, clock=clock, materials=materials)
-            # print('--------', device.id)
-            # print(stage_state)
-            # print(need)
-            # print(device_state)
-            # print(available_action)
             available_action *= need
             if available_action.sum()==0:
                 available_action[-1] = 1
