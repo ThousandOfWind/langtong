@@ -5,7 +5,7 @@ import torch
 import random
 import numpy as np
 
-from MDP.modules_v3 import DECISION_INTERVAL
+from MDP.modules_v4 import DECISION_INTERVAL
 from data.read import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, curriculum_order
 from Controller.curriculum_schdule import CURs
 from data.create_map import Equipment_Relation_Map
@@ -19,7 +19,7 @@ parser.add_argument("--cuda", action="store_true", help="Use cuda?")
 parser.add_argument("--gpus", default="2", type=str, help="gpu ids (default: 2)")
 parser.add_argument("--nEpochs", type=int, default=1, help="Number of epochs to train for")
 parser.add_argument("--nEpisode", type=int, default=5000000, help="Number of epochs to train for")
-parser.add_argument("--agentType", default="MF-RNN", type=str, help="agentType")
+parser.add_argument("--agentType", default="MF2", type=str, help="agentType")
 parser.add_argument("--rewardType", default="mnp", type=str, help="rewardType")
 parser.add_argument('--pretrained', default='', type=str, help='path to pretrained model (default: none)')
 parser.add_argument("--mamorySize", type=int, default=1000, help="mamorySize")

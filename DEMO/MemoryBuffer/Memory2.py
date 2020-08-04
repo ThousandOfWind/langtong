@@ -91,21 +91,21 @@ class MemoryBuffer:
                     action_index = th.LongTensor(self.buffer[b_id][d_id]['action_index']).to(device)
                     action[d_id][item] = one_hot.scatter(1, action_index.unsqueeze(1), 1)
         return batch
-        '''if mf:
-            for d_id in idList:
-                for item in range(batchSize):
-                    mean_action = th.zeros_like(action[d_id][item])
-                    for nei in map[d_id]['Counterparts']:
-                        # print(mean_action.shape, action[nei][item].shape)
-                        mean_action += action[nei][item]
-                    mean_action /= len(map[d_id]['Counterparts'])
-
-                    batch['mean_action'].append(copy.deepcopy(mean_action))
-                    batch['last_mean_action'].append(th.zeros((1, mean_action.shape[-1])).to(device))
-                    batch['last_mean_action'].append(copy.deepcopy(mean_action[:-1]))
-            batch['mean_action'] = th.cat(batch['mean_action'], dim=0).to(device)
-            batch['last_mean_action'] = th.cat(batch['last_mean_action'], dim=0).to(device)
-'''     
+#         '''if mf:
+#             for d_id in idList:
+#                 for item in range(batchSize):
+#                     mean_action = th.zeros_like(action[d_id][item])
+#                     for nei in map[d_id]['Counterparts']:
+#                         # print(mean_action.shape, action[nei][item].shape)
+#                         mean_action += action[nei][item]
+#                     mean_action /= len(map[d_id]['Counterparts'])
+#
+#                     batch['mean_action'].append(copy.deepcopy(mean_action))
+#                     batch['last_mean_action'].append(th.zeros((1, mean_action.shape[-1])).to(device))
+#                     batch['last_mean_action'].append(copy.deepcopy(mean_action[:-1]))
+#             batch['mean_action'] = th.cat(batch['mean_action'], dim=0).to(device)
+#             batch['last_mean_action'] = th.cat(batch['last_mean_action'], dim=0).to(device)
+# '''
 
     def get_current(self, d_id, item,  map=None):
 

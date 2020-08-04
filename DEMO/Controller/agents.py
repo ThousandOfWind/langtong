@@ -279,5 +279,9 @@ def init_Agents(param_set, agent_id_list=None, writer=None, map=None, name=None)
     if agentType == 'MF':
         return MF_Agents(param_set, agent_id_list, writer, map, name)
     if agentType == 'MF-RNN':
+        return MF_RNN_Agents(param_set, agent_id_list, writer, map, name)
+    if agentType == 'MF2':
         return MF_Agents(param_set, agent_id_list, writer, map, name)
+    if agentType == 'MF-RNN2':
+        return MF2_RNN_Agents(param_set, agent_id_list, writer, map, name)
     return
