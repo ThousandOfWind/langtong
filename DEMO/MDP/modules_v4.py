@@ -526,9 +526,52 @@ class Stage:
         :param agents:
         :return:
         """
+        #Loop(M):
+        #   for each agent sample action according to policy and current mean action
+        #   compute new mean action
+        #Take action and observe reward
+        #Store experience
+        M = 3
+        size = len(self.action_to_index)
+        first_action = np.random.randint(0, size - 1)
+        mean_action_one_hot = np.zeros(size)
+        mean_action_one_hot[first_action] = 1
+        total_action = {}
+        total_available_action = {}
+        
+        for i in range(M):
+            virtual_stage = copy.deepcopy(self)
+            virtual_materials = copy.deepcopy(materials) 
+            # action_sum=np.zeros()
+            action_sum=np.zeros(size)
+            for index, device in enumerate(virtual_stage.devices):
+                stage_state, need = virtual_stage.get_state()
+                device_state, available_action = device.get_state(action_to_index=virtual_stage.action_to_index, clock=clock, materials=virtual_materials)
+                available_action *= need
+                if available_action.sum()==0:
+                    available_action[-1] = 1
+                obs = np.concatenate([stage_state, device_state])
+                if self.obId:
+                    id = [0] * len(self.devices)
+                    id[index] = 1
+                    obs = np.concatenate([obs, id])
+                action_index = agents.choose_action(obs=obs, available_action=available_action, t=t, d_id=device.id, episode=e,mean_action=mean_action_one_hot, std_out_type=std_out_type, memory=memoryBuffer)
+                action = virtual_stage.index_to_action[action_index]
+                current_action = np.zeros(size)
+                current_action[action_index] = 1
+                total_action[device.id] = action_index
+                action_sum = action_sum + current_action
+            # print(self.name, t, i)
+            mean_action_one_hot = action_sum / len(virtual_stage.devices)
+                   
         for index, device in enumerate(self.devices):
             stage_state, need = self.get_state()
             device_state, available_action = device.get_state(action_to_index=self.action_to_index, clock=clock, materials=materials)
+            # print('--------', device.id)
+            # print(stage_state)
+            # print(need)
+            # print(device_state)
+            # print(available_action)
             available_action *= need
             if available_action.sum()==0:
                 available_action[-1] = 1
@@ -540,7 +583,7 @@ class Stage:
                 id = [0] * len(self.devices)
                 id[index] = 1
                 obs = np.concatenate([obs, id])
-            action_index = agents.choose_action(obs=obs, available_action=available_action, t=t, d_id=device.id, episode=e, std_out_type=std_out_type, memory=memoryBuffer)
+            action_index = agents.choose_action(obs=obs, available_action=available_action, t=t, d_id=device.id, episode=e,mean_action=mean_action_one_hot, std_out_type=std_out_type, memory=memoryBuffer)
             action = self.index_to_action[action_index]
 
             productivity = device.act( action, t, clock, materials, reward_rule, std_out_type)

@@ -9,7 +9,7 @@ DEMAND = {}  # 需求
 REMAIN = {}  # 剩余
 SCHEDULED = {}  # 已安排的生产
 DEVICE_STATES = {}  # every value is a list: [设备生产此任务剩余时间(-1：等待中, 0:无任务，待安排, -2: 与 -1 相同，但跳过本次), 工艺m_id, 订单o_id, 已等待时间, 换线剩余时间]
-SEARCH_STEP = 60  # 时间粒度
+SEARCH_STEP = 10  # 时间粒度
 PRODUCTION_STEP = 60  # 生产划分粒度
 BEST_SO_FAR = float('inf')
 DEVICE_ID = list(DEVICE.keys())
@@ -127,36 +127,22 @@ def result_to_csv(plans):
 
 def schedule(current_time, remain, scheduled, device_states,current_plan):
     global BEST_SO_FAR
-    global count
-    global trials
-    global trial_time
-    global PRODUCTION_STEP
     # for m_id in MATERIAL.keys():
     #     if type(MATERIAL[m_id]) == dict:
     #         for o_id in MATERIAL[m_id]:
     #             print(m_id, o_id, scheduled[m_id][o_id], remain[m_id][o_id], DEMAND[m_id][o_id])
     # print(dict(filter(lambda elem: elem[1][0] > 0, device_states.items())))
     # print("loop:", current_time)
-
     if current_time >= BEST_SO_FAR:
-        count += 1
         return current_time + 10, {}
     completed = 1
     for o_id, order in orderML.items():  # 检查订单是否完成
         if order.bom[0][1] > remain[order.bom[0][0]][o_id] * 1.0001:
             completed = 0
     if completed == 1:
-        # print("count", count)
         print("complete", current_time)
-        print("count", count)
         gantt(current_plan)
         result_to_csv(current_plan)
-        # trials += 1
-        # trial_time.append(current_time)
-        # if trials == 1000:
-        #     plt.hist(trial_time)
-        #     plt.show()
-        #     exit(1)
         return current_time, {}
 
     for d_id, state in device_states.items():
@@ -188,25 +174,15 @@ def schedule(current_time, remain, scheduled, device_states,current_plan):
                 child_remain = copy.deepcopy(remain)
                 child_scheduled = copy.deepcopy(scheduled)
                 child_plan = copy.deepcopy(current_plan)
-                old_production_time = production_time
                 if state[1] != "None":  # 之前有生产任务
                     if state[1] == m_id:  # 连续生产
                         child_states[d_id][0] = production_time
                         child_states[d_id][4] = 0
                         child_plan[d_id].append([m_id, o_id, current_time, production_time])
-                        # if m_id == '8000066422':
-                        #     print("no change", d_id, state[2], state[1], current_time, production_time)
                     else:  # 换线
-                        if DEVICE[d_id].crafts[state[1]].changeTime >= production_time:
-                            child_states[d_id][0] = production_time + DEVICE[d_id].crafts[state[1]].changeTime
-                            child_states[d_id][4] = DEVICE[d_id].crafts[state[1]].changeTime
-                            child_plan[d_id].append([m_id, o_id, current_time + DEVICE[d_id].crafts[state[1]].changeTime, production_time])
-                        else:
-                            child_states[d_id][0] = production_time
-                            production_time -= DEVICE[d_id].crafts[state[1]].changeTime
-                            child_states[d_id][4] = DEVICE[d_id].crafts[state[1]].changeTime
-                            child_plan[d_id].append(
-                                [m_id, o_id, current_time + DEVICE[d_id].crafts[state[1]].changeTime, production_time])
+                        child_states[d_id][0] = production_time + DEVICE[d_id].crafts[state[1]].changeTime
+                        child_states[d_id][4] = DEVICE[d_id].crafts[state[1]].changeTime
+                        child_plan[d_id].append([m_id, o_id, current_time + DEVICE[d_id].crafts[state[1]].changeTime, production_time])
                 else:
                     child_states[d_id][0] = production_time
                     child_states[d_id][4] = 0
@@ -215,7 +191,7 @@ def schedule(current_time, remain, scheduled, device_states,current_plan):
                 #     print(child_scheduled[m_id][o_id], production_amount, current_time, d_id)
                 # if current_time == 0 and d_id == 'ZS04':
                 #     print(m_id, o_id, child_scheduled[m_id][o_id], production_amount, current_time, d_id)
-                child_scheduled[m_id][o_id] += production_amount/old_production_time * production_time
+                child_scheduled[m_id][o_id] += production_amount
                 child_states[d_id][1] = m_id
                 child_states[d_id][2] = o_id
                 child_states[d_id][3] = 0
@@ -279,12 +255,9 @@ print(COLORS)
 
 for d_id in DEVICE.keys():
     DEVICE_STATES[d_id] = [0, "None", "None", 0, 0]
+if __name__ == '__main__':
+    init_plan = {}
+    for dev in DEVICE_ID:
+        init_plan[dev] = []
 
-count = 0
-trials = 0
-trial_time = []
-init_plan = {}
-for dev in DEVICE_ID:
-    init_plan[dev] = []
-
-overall_best_time, overall_best_plan = schedule(0, REMAIN, SCHEDULED, DEVICE_STATES, init_plan)
+    overall_best_time, overall_best_plan = schedule(0, REMAIN, SCHEDULED, DEVICE_STATES, init_plan)

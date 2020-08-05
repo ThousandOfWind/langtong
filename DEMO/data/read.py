@@ -1,4 +1,7 @@
-from MDP.modules_v3 import Material, Craft, Device, Stage, DECISION_INTERVAL
+# from MDP.modules_v3 import Material, Craft, Device, Stage, DECISION_INTERVAL
+from MDP.modules_v5 import Material, Craft, Device, Stage, DECISION_INTERVAL
+
+
 import pandas as pd
 import numpy as np
 import random as rd

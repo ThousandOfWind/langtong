@@ -183,7 +183,7 @@ class Craft:
 
             source.consume(t * com * self.productivity, self.d_id, time_step, std_out_type)
             source.add_demand_refer(t * com * self.productivity)
-        return t * self.productivity
+        return t * self.productivity, t
 
     def order_act(self, time_step, materials, std_out_type):
         flag = True
@@ -237,6 +237,7 @@ class Device:
         self.present_craft = 'wait'
         self.last_craft = 'wait'
         self.record = []
+        self.prod_list = []
 
         self.operatingHours = operatingHours
         self.remainChangeTime = 0
@@ -264,7 +265,9 @@ class Device:
         self.accumulateWaitTime = 0
         self.changeCraft = 0
         self.record = []
+        self.prod_list = []
         self.production = {}
+        self.free_time = 0
         for m_id in self.crafts.keys():
             for o_id in self.crafts[m_id].target_m:
                 self.production[m_id + o_id] = 0
@@ -390,7 +393,6 @@ class Device:
         self.production[action['m_id']+ action['o_id']] += productivity
         self.record.append([time_step, action['m_id'], action['o_id'], productivity])
 
-
         # self.reward += reward_rule[action] * productivity
         return
 
@@ -414,6 +416,7 @@ class Device:
             self.remainChangeTime = max(0, self.remainChangeTime - DECISION_INTERVAL)
             self.accumulateWaitTime += DECISION_INTERVAL
             self.record.append([time_step,'wait'])
+            self.free_time = DECISION_INTERVAL
             return 0
 
         # self.check_action(action_to_index, clock, materials, action)
@@ -440,7 +443,8 @@ class Device:
         else:
             print(time_step, self.id, 'Change')
             self.last_craft = 'wait'
-            changeTime = self.crafts[self.present_craft].changeTime
+            changeTime = self.crafts[self.present_craft].changeTime - self.free_time
+            self.free_time = 0
             self.changeCraft += 1
             self.reward += reward_rule['changeCraft'] * changeTime
             if changeTime > DECISION_INTERVAL:
@@ -454,9 +458,14 @@ class Device:
                 time = DECISION_INTERVAL - changeTime
                 self.reward += reward_rule['wait'] * changeTime
                 self.accumulateWaitTime += changeTime
-        productivity =  self.crafts[action['m_id']].act(action, time, time_step, materials, std_out_type)
+        productivity, real_t =  self.crafts[action['m_id']].act(action, time, time_step, materials, std_out_type)
+        if real_t < time:
+            self.free_time = time - real_t
+        else:
+            self.free_time = 0
         self.production[action['m_id']+ action['o_id']] += productivity
-        self.record.append([time_step, action['m_id'], action['o_id'], productivity])
+        self.record.append([time_step + DECISION_INTERVAL - time, action['m_id'], action['o_id'], productivity])
+        self.prod_list.append([action['m_id'], action['o_id'], time_step + DECISION_INTERVAL - time, real_t])
 
 
         # self.reward += reward_rule[action] * productivity
@@ -495,6 +504,11 @@ class Stage:
         self.index_to_action.append(ita)
         self.action_to_index['wait'] = count
 
+        self.stage_sequantial_step = self.primitive_stage_sequantial_step
+
+    def set_as_MF(self):
+        self.stage_sequantial_step = self.MF_stage_sequantial_step
+
 
     def __str__(self):
         s = '-----Stage Name:' + self.name + '-----\n'
@@ -521,7 +535,107 @@ class Stage:
             need[index] = 1 if state[0,index] > 0 else 0
         return state.reshape(-1), need
 
-    def stage_sequantial_step(self, agents, memoryBuffer, clock, t, materials, std_out_type, reward_rule, e=0):
+    def MF_stage_sequantial_step(self, agents, memoryBuffer, clock, t, materials, std_out_type, reward_rule, e=0):
+        """
+        :param agents:
+        :return:
+        """
+        #Loop(M):
+        #   for each agent sample action according to policy and current mean action
+        #   compute new mean action
+        #Take action and observe reward
+        #Store experience
+        M = 3
+        size = len(self.action_to_index)
+        first_action = np.random.randint(0, size - 1)
+        mean_action_one_hot = np.zeros(size)
+        mean_action_one_hot[first_action] = 1
+        total_action = {}
+        total_available_action = {}
+        
+        for i in range(M):
+            virtual_stage = copy.deepcopy(self)
+            virtual_materials = copy.deepcopy(materials) 
+            # action_sum=np.zeros()
+            action_sum=np.zeros(size)
+            for index, device in enumerate(virtual_stage.devices):
+                stage_state, need = virtual_stage.get_state()
+                device_state, available_action = device.get_state(action_to_index=virtual_stage.action_to_index, clock=clock, materials=virtual_materials)
+                available_action *= need
+                if available_action.sum()==0:
+                    available_action[-1] = 1
+                obs = np.concatenate([stage_state, device_state])
+                if self.obId:
+                    id = [0] * len(self.devices)
+                    id[index] = 1
+                    obs = np.concatenate([obs, id])
+                action_index = agents.choose_action(obs=obs, available_action=available_action, t=t, d_id=device.id, episode=e,mean_action=mean_action_one_hot, std_out_type=std_out_type, memory=memoryBuffer)
+                action = virtual_stage.index_to_action[action_index]
+                current_action = np.zeros(size)
+                current_action[action_index] = 1
+                total_action[device.id] = action_index
+                action_sum = action_sum + current_action
+            # print(self.name, t, i)
+            mean_action_one_hot = action_sum / len(virtual_stage.devices)
+                   
+        for index, device in enumerate(self.devices):
+            stage_state, need = self.get_state()
+            device_state, available_action = device.get_state(action_to_index=self.action_to_index, clock=clock, materials=materials)
+            # print('--------', device.id)
+            # print(stage_state)
+            # print(need)
+            # print(device_state)
+            # print(available_action)
+            available_action *= need
+            if available_action.sum()==0:
+                available_action[-1] = 1
+            obs = np.concatenate([stage_state, device_state])
+            # print(available_action)
+
+
+            if self.obId:
+                id = [0] * len(self.devices)
+                id[index] = 1
+                obs = np.concatenate([obs, id])
+            action_index = agents.choose_action(obs=obs, available_action=available_action, t=t, d_id=device.id, episode=e,mean_action=mean_action_one_hot, std_out_type=std_out_type, memory=memoryBuffer)
+            action = self.index_to_action[action_index]
+
+            productivity = device.act( action, t, clock, materials, reward_rule, std_out_type)
+            # print(action_index, action, productivity)
+
+
+            # 补充其他奖赏逻辑
+            device.add_reward(reward_rule['step'])
+            if action['m_id'] == 'wait':
+                reward = device.get_reward()
+            else:
+                mnr = reward_rule['meet_need'] if stage_state[action_index]>0 else 0
+                device.add_reward(mnr)
+                reward = device.get_reward()
+
+            immediately_stage_state, _ = self.get_state()
+            immediately_device_state, _ = device.get_state(action_to_index=self.action_to_index, clock=clock, materials=materials)
+            immediately_obs = np.concatenate([immediately_stage_state, immediately_device_state])
+
+            if self.obId:
+                immediately_obs = np.concatenate([immediately_obs, id])
+
+            experience = {
+                "id": device.id,
+                "step": t,
+                "obs": obs,
+                "immediately_obs": immediately_obs,
+                "available_action": available_action,
+                "action": action,
+                "action_index": action_index,
+                "reward": reward
+            }
+            if std_out_type['device_action']:
+                print(t, ':', device.id, action['m_id'], action['o_id'], reward)
+
+            memoryBuffer.append(experience)
+
+    def primitive_stage_sequantial_step(self, agents, memoryBuffer, clock, t, materials, std_out_type, reward_rule, e=0):
         """
         :param agents:
         :return:
@@ -577,6 +691,7 @@ class Stage:
                 print(t, ':', device.id, action['m_id'], action['o_id'], reward)
 
             memoryBuffer.append(experience)
+
 
 
     def info(self):

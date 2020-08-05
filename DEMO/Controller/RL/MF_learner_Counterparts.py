@@ -106,6 +106,64 @@ class QLearner:
             self.update()
             self.last_update_step = self.train_step
 
+    def train2(self, batch, episode):
+        # batch * agent , t
+        device = th.device("cuda" if th.cuda.is_available() else "cpu")
+
+        self.train_step += 1
+        reward = th.FloatTensor(batch["reward"]).to(device)
+        action = th.LongTensor(batch["action"]).to(device)
+        done = th.FloatTensor(batch["done"]).to(device)
+        obs = th.FloatTensor(batch["obs"]).to(device)
+        next_avail_action = th.FloatTensor(batch["next_avail_action"]).to(device)
+        next_obs = th.FloatTensor(batch["next_obs"]).to(device)
+        mean_action = batch["mean_action"].to(device)
+        next_mean_action = batch['next_mean_action'].to(device)
+        lio = th.FloatTensor(batch["last_iobs"]).to(device)
+        next_lio = th.FloatTensor(batch["iobs"]).to(device)
+
+        # shuffle_index = np.arange(reward.shape[0])
+        # rd.shuffle(shuffle_index)
+        shuffle_index = np.random.choice(reward.shape[0], batch["bs"] * 100)
+        shuffle_index = th.from_numpy(shuffle_index).to(device)
+        reward = reward.gather(dim=0, index=shuffle_index)
+        action = action.gather(dim=0, index=shuffle_index)
+        done = done.gather(dim=0, index=shuffle_index)
+        obs = obs.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,obs.shape[1]))
+        next_obs = next_obs.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,next_obs.shape[1]))
+        next_avail_action = next_avail_action.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,next_avail_action.shape[1]))
+        # mean_action = mean_action.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,mean_action.shape[1]))
+        # last_mean_action = last_mean_action.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,last_mean_action.shape[1]))
+        lio = lio.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,obs.shape[1]))
+        next_lio = next_lio.gather(dim=0, index=shuffle_index.reshape(-1,1).repeat(1,obs.shape[1]))
+
+
+        q = self.Q(obs, lio, mean_action)
+
+        chosen_action_qvals = th.gather(q, dim=1, index=action.unsqueeze(-1)).squeeze(-1)
+
+        next_q = self.Q(next_obs, next_lio, next_mean_action)
+
+        next_q[next_avail_action == 0] = -9999
+        next_max_q, _ = next_q.max(dim=1)
+
+        targets = (reward + self.gamma * (1 - done) * next_max_q).detach()
+        loss = ((chosen_action_qvals - targets) ** 2).sum()
+
+        self.writer.add_scalar('Loss/TD_loss_'+self.name, loss.item(), episode)
+
+        # Optimise
+        self.optimiser.zero_grad()
+        loss.backward()
+        grad_norm = th.nn.utils.clip_grad_norm_(self.params, self.grad_norm_clip)
+        self.optimiser.step()
+
+        # if (loss) < 0.25 and (self.train_step - self.last_update_step)/self.update_frequncy >= 1.0:
+        if (self.train_step - self.last_update_step)/self.update_frequncy >= 1.0:
+            self.update()
+            self.last_update_step = self.train_step
+
+
     def save_model(self, path):
         if not os.path.exists(path):
             os.makedirs(path)

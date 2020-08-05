@@ -4,8 +4,9 @@ import os
 import torch
 import random
 import numpy as np
+import matplotlib.pyplot as plt
 
-from MDP.modules_v3 import DECISION_INTERVAL
+from MDP.modules_v5 import DECISION_INTERVAL
 from data.read import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, curriculum_order
 from Controller.curriculum_schdule import CURs
 from data.create_map import Equipment_Relation_Map
@@ -13,23 +14,25 @@ from Controller.agents import init_Agents
 from MemoryBuffer.Memory import MemoryBuffer
 from MDP.reward import REWARD_RUlE
 
+from scheduling_v2 import  COLORS
+
 
 parser = argparse.ArgumentParser(description="langtong")
 parser.add_argument("--cuda", action="store_true", help="Use cuda?")
 parser.add_argument("--gpus", default="2", type=str, help="gpu ids (default: 2)")
 parser.add_argument("--nEpochs", type=int, default=1, help="Number of epochs to train for")
-parser.add_argument("--nEpisode", type=int, default=5000000, help="Number of epochs to train for")
-parser.add_argument("--agentType", default="MF-RNN", type=str, help="agentType")
+parser.add_argument("--nEpisode", type=int, default=50, help="Number of epochs to train for")
+parser.add_argument("--agentType", default="random", type=str, help="agentType: random, RL, MF2")
 parser.add_argument("--rewardType", default="mnp", type=str, help="rewardType")
 parser.add_argument('--pretrained', default='', type=str, help='path to pretrained model (default: none)')
 parser.add_argument("--mamorySize", type=int, default=1000, help="mamorySize")
-parser.add_argument("--batchSize", type=int, default=2, help="Training batch size")
-parser.add_argument("--lr", type=float, default=5e-5, help="Learning Rate. Default=0.0005")
-parser.add_argument("--etl", type=int, default=100, help="epsilon_time_length default=3000 from estart - eend")
+parser.add_argument("--batchSize", type=int, default=4, help="Training batch size")
+parser.add_argument("--lr", type=float, default=1e-3, help="Learning Rate. Default=0.0005")
+parser.add_argument("--etl", type=int, default=30, help="epsilon_time_length default=3000 from estart - eend")
 parser.add_argument("--estart", type=float, default=1, help="epsilon_time_length default=3000 from estart - eend")
 parser.add_argument("--eend", type=float, default=0, help="epsilon_time_length default=3000 from estart - eend")
 parser.add_argument("--gamma", type=float, default=0.99, help="GAMMA. Default=0.8")
-parser.add_argument("--tui", type=int, default=200, help="target update interval. Default=200")
+parser.add_argument("--tui", type=int, default=6, help="target update interval. Default=200")
 parser.add_argument("--delay", type=int, default=1, help="extend time for product. Default=2")
 parser.add_argument("--hiddenDim", type=int, default=64, help="hidden dim of network. Default=64")
 parser.add_argument("--obs_hidden_dim", type=int, default=64, help="hidden dim of network. Default=64")
@@ -138,6 +141,7 @@ def run(param_set):
         Artificial_STAGE[stage_id].obId = param_set['obId']
         param = param_set.copy()
         param['path'] = 'model' + path + stage_id + '/'
+        Artificial_STAGE[stage_id].set_as_MF()
         param.update(Artificial_STAGE[stage_id].info())
         agent_id_list = [d.id for d in Artificial_STAGE[stage_id].devices]
         agents = init_Agents(param_set=param, agent_id_list=agent_id_list, writer=writer, name=stage_id, map=Equipment_Relation_Map)
@@ -199,6 +203,7 @@ def run(param_set):
 
         if this_t < t_min:
             print('\tsave!')
+            gantt()
             t_min = this_t
             for d_id in DEVICE.keys():
                 DEVICE[d_id].save(result_path)
@@ -228,6 +233,32 @@ def run(param_set):
             if ( e > param_set['batch_size']) :
                 for stage_id in Artificial_STAGE_name:
                     all_agents[stage_id].learn(memory=memoryBuffer, episode=e)
+
+
+def gantt():
+    plt.figure(figsize=(50, 50),dpi=300)
+    DEVICE_ID = []
+    for s in Artificial_STAGE_name:
+        for device in Artificial_STAGE[s].devices:
+            DEVICE_ID.append(device.id)
+            for production in device.prod_list:
+                m_id = production[0]
+                o_id = production[1]
+                start_time = production[2]
+                production_time = production[3]
+                plt.barh(device.id, production_time, left=start_time, color=rgb_to_hex(COLORS[m_id][o_id]))
+                plt.text(start_time, device.id, '%s\n%s' % (m_id, o_id), fontsize=1)
+    plt.tick_params(labelsize=1)
+    plt.yticks(DEVICE_ID)
+    plt.show()
+    return
+
+def rgb_to_hex(color):
+    strn = '#'
+    for rgb in color:
+        strn += str(hex(rgb))[-2:].replace('x', '0').upper()
+    return strn
+
 
 
 if __name__ == '__main__':
