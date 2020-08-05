@@ -62,6 +62,7 @@ class MemoryBuffer:
             'iobs': [],
             'mean_action': [],
             'last_mean_action': [],
+            'next_mean_action': [],
             'bs': batchSize,
         }
 
@@ -102,10 +103,17 @@ class MemoryBuffer:
                     mean_action /= len(map[d_id]['Counterparts'])
 
                     batch['mean_action'].append(copy.deepcopy(mean_action))
+
                     batch['last_mean_action'].append(th.zeros((1, mean_action.shape[-1])).to(device))
                     batch['last_mean_action'].append(copy.deepcopy(mean_action[:-1]))
+
+                    batch['next_mean_action'].append(copy.deepcopy(mean_action[1:]))
+                    batch['next_mean_action'].append(th.zeros((1, mean_action.shape[-1])).to(device))
+
             batch['mean_action'] = th.cat(batch['mean_action'], dim=0).to(device)
             batch['last_mean_action'] = th.cat(batch['last_mean_action'], dim=0).to(device)
+            batch['next_mean_action'] = th.cat(batch['last_mean_action'], dim=0).to(device)
+
 
         return batch
 

@@ -71,7 +71,7 @@ class QLearner:
         next_lio = th.FloatTensor(batch["iobs"]).to(device)
         next_avail_action = th.FloatTensor(batch['next_avail_action']).to(device)
 
-        shuffle_index = np.arange(reward.shape[0])
+        shuffle_index = np.random.choice(reward.shape[0], batch["bs"] * 100)
         rd.shuffle(shuffle_index)
         shuffle_index = th.from_numpy(shuffle_index).to(device)
         reward = reward.gather(dim=0, index=shuffle_index)

@@ -175,7 +175,7 @@ class MF2_Agents:
         :return:
         """
         batch = memory.sample(self.agent_id_list, self.batchSize, mf=True, map=self.map)
-        self.learner.train(batch=batch, episode=episode)
+        self.learner.train2(batch=batch, episode=episode)
 
 class MF2_RNN_Agents:
     def __init__(self, param_set, agent_id_list, writer, map, name):

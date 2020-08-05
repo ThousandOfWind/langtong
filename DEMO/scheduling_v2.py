@@ -255,9 +255,9 @@ print(COLORS)
 
 for d_id in DEVICE.keys():
     DEVICE_STATES[d_id] = [0, "None", "None", 0, 0]
+if __name__ == '__main__':
+    init_plan = {}
+    for dev in DEVICE_ID:
+        init_plan[dev] = []
 
-init_plan = {}
-for dev in DEVICE_ID:
-    init_plan[dev] = []
-
-overall_best_time, overall_best_plan = schedule(0, REMAIN, SCHEDULED, DEVICE_STATES, init_plan)
+    overall_best_time, overall_best_plan = schedule(0, REMAIN, SCHEDULED, DEVICE_STATES, init_plan)
