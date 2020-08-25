@@ -203,7 +203,7 @@ def run(param_set):
 
         if this_t < t_min:
             print('\tsave!')
-            gantt()
+            gantt(result_path, e)
             t_min = this_t
             for d_id in DEVICE.keys():
                 DEVICE[d_id].save(result_path)
@@ -235,22 +235,23 @@ def run(param_set):
                     all_agents[stage_id].learn(memory=memoryBuffer, episode=e)
 
 
-def gantt():
-    plt.figure(figsize=(50, 50),dpi=300)
+def gantt(path,e):
+    plt.figure(figsize=(50, 50))
     DEVICE_ID = []
     for s in Artificial_STAGE_name:
         for device in Artificial_STAGE[s].devices:
             DEVICE_ID.append(device.id)
+            # print(device.id,device.prod_list)
             for production in device.prod_list:
                 m_id = production[0]
                 o_id = production[1]
                 start_time = production[2]
                 production_time = production[3]
                 plt.barh(device.id, production_time, left=start_time, color=rgb_to_hex(COLORS[m_id][o_id]))
-                plt.text(start_time, device.id, '%s\n%s' % (m_id, o_id), fontsize=1)
-    plt.tick_params(labelsize=1)
+                plt.text(start_time, device.id, '%s\n%s' % (m_id, o_id))
+    plt.tick_params()
     plt.yticks(DEVICE_ID)
-    plt.show()
+    plt.savefig(path +'gan_' + str(e) + '.png')
     return
 
 def rgb_to_hex(color):
@@ -318,7 +319,7 @@ if __name__ == '__main__':
         strC = ''
 
 
-    path = '/m3/' + param_set['agentType'] + strC + \
+    path = '/' + param_set['agentType'] + strC + \
            '/etl'+str(param_set['time_length'])+'-'+ str(param_set['epsilon_start']) + str(param_set['epsilon_end']) + \
            '/m' + str(param_set['mamory_size'])[:-3] + 'k-bs' + str(param_set['batch_size']) + '*-tui' + str(param_set['target_update_interval']) + \
            '/g' + str(param_set['gamma'])[2:] + '-REW' + param_set['reward_Type'] + '-delay'+ str(param_set['delay'])+  \

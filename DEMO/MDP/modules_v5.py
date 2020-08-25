@@ -405,13 +405,14 @@ class Device:
         """
         self.accumulateReward += self.reward
         self.reward = 0
+        changeTime = 0
         if not self.operatingHours[clock]:
             self.record.append([time_step, 'close'])
             return 0
 
         if action['m_id'] == 'wait':
             self.reward += reward_rule['wait'] * DECISION_INTERVAL
-            self.last_craft = self.present_craft
+            # self.last_craft = self.present_craft
             self.present_craft = 'wait'
             self.remainChangeTime = max(0, self.remainChangeTime - DECISION_INTERVAL)
             self.accumulateWaitTime += DECISION_INTERVAL
@@ -421,43 +422,36 @@ class Device:
 
         # self.check_action(action_to_index, clock, materials, action)
 
+        #
+        # if self.present_craft == 'onChange':
+        #     if self.remainChangeTime >= DECISION_INTERVAL:
+        #         self.remainChangeTime -= DECISION_INTERVAL
+        #         self.reward += reward_rule['wait'] * DECISION_INTERVAL
+        #         self.record.append([time_step, 'change'])
+        #         return 0
+        #     else:
+        #         time = DECISION_INTERVAL - self.remainChangeTime
+        #         wait = self.remainChangeTime
+        #         self.reward += reward_rule['wait'] * wait
+        #         self.accumulateWaitTime += wait
+        #         self.remainChangeTime = 0
+        #         self.present_craft = action['m_id']
 
-        if self.present_craft == 'onChange':
-            if self.remainChangeTime >= DECISION_INTERVAL:
-                self.remainChangeTime -= DECISION_INTERVAL
-                self.reward += reward_rule['wait'] * DECISION_INTERVAL
-                self.record.append([time_step, 'change'])
-                return 0
-            else:
-                time = DECISION_INTERVAL - self.remainChangeTime
-                wait = self.remainChangeTime
-                self.reward += reward_rule['wait'] * wait
-                self.accumulateWaitTime += wait
-                self.remainChangeTime = 0
-                self.present_craft = action['m_id']
-
-        elif self.present_craft == action['m_id'] or (self.present_craft=='wait' and self.last_craft in ('wait', action['m_id'])):
+        if self.present_craft == action['m_id'] or (self.present_craft=='wait'):
             time = DECISION_INTERVAL
-
+            self.present_craft = action['m_id']
 
         else:
-            print(time_step, self.id, 'Change')
-            self.last_craft = 'wait'
+            # print(time_step, self.id, 'Change')
+            # self.last_craft = 'wait'
             changeTime = self.crafts[self.present_craft].changeTime - self.free_time
             self.free_time = 0
             self.changeCraft += 1
             self.reward += reward_rule['changeCraft'] * changeTime
-            if changeTime > DECISION_INTERVAL:
-                self.present_craft = 'onChange'
-                self.remainChangeTime = changeTime - DECISION_INTERVAL
-                self.reward += reward_rule['wait'] * DECISION_INTERVAL
-                self.accumulateWaitTime += DECISION_INTERVAL
-                return 0
-            else:
-                self.present_craft = action['m_id']
-                time = DECISION_INTERVAL - changeTime
-                self.reward += reward_rule['wait'] * changeTime
-                self.accumulateWaitTime += changeTime
+            self.present_craft = action['m_id']
+            time = DECISION_INTERVAL - changeTime
+            self.reward += reward_rule['wait'] * changeTime
+            self.accumulateWaitTime += changeTime
         productivity, real_t =  self.crafts[action['m_id']].act(action, time, time_step, materials, std_out_type)
         if real_t < time:
             self.free_time = time - real_t
@@ -468,7 +462,7 @@ class Device:
         self.prod_list.append([action['m_id'], action['o_id'], time_step + DECISION_INTERVAL - time, real_t])
 
 
-        # self.reward += reward_rule[action] * productivity
+        # self.reward += reward_rule[''] * productivity
         return productivity
 
 class Stage:
