@@ -6,7 +6,7 @@ import random
 import numpy as np
 
 from MDP.modules_v3 import DECISION_INTERVAL
-from data.read import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, generate_virtual_order
+from data.read3 import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, generate_virtual_order
 from Controller.agents import init_Agents
 from MemoryBuffer.Memory import MemoryBuffer
 from MDP.reward import REWARD_RUlE
