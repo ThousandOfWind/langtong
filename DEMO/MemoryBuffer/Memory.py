@@ -112,7 +112,7 @@ class MemoryBuffer:
 
             batch['mean_action'] = th.cat(batch['mean_action'], dim=0).to(device)
             batch['last_mean_action'] = th.cat(batch['last_mean_action'], dim=0).to(device)
-            batch['next_mean_action'] = th.cat(batch['last_mean_action'], dim=0).to(device)
+            batch['next_mean_action'] = th.cat(batch['next_mean_action'], dim=0).to(device)
 
 
         return batch

@@ -14,8 +14,6 @@ class DNNAgent(nn.Module):
         self.output_len = param_set['n_actions']
         self.hidden_layer = param_set['hidden_layer']
 
-        self.lio = param_set['lio']
-
         self.encode = nn.Linear(self.input_len, self.hidden_dim)
         self.rnn = nn.GRUCell(self.hidden_dim, self.hidden_dim)
 
@@ -29,6 +27,8 @@ class DNNAgent(nn.Module):
         l = F.relu(self.encode(lio))
         if self.on_cuda:
             h = th.zeros((bs, self.hidden_dim)).cuda()
+        else:
+            h = th.zeros((bs, self.hidden_dim))
         h = F.relu(self.rnn(l,h))
 
         x = F.relu(self.encode(obs))
