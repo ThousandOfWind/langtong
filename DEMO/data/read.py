@@ -9,15 +9,11 @@ import random as rd
 
 std_out = False
 
-# device_pd = pd.read_csv('data/sample/device.csv', sep=',')  # 设备编号,班次
-# craft_pd = pd.read_csv('data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
-# order_pd = pd.read_csv('data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
-# bom_pd = pd.read_csv('data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+device_pd = pd.read_csv('data/sample/device.csv', sep=',')  # 设备编号,班次
+craft_pd = pd.read_csv('data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+order_pd = pd.read_csv('data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
+bom_pd = pd.read_csv('data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
 
-device_pd = pd.read_csv('sample2/device.csv', sep=',')  # 设备编号,班次
-craft_pd = pd.read_csv('sample2/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
-order_pd = pd.read_csv('sample2/order.csv', sep=',')  # 订单编号        产品编号     产品量
-bom_pd = pd.read_csv('sample2/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
 
 
 MATERIAL = {}
@@ -53,8 +49,7 @@ for index, row in bom_pd.iterrows():
         M_INIT[m_id]['type'] = True
         M_INIT[m_id]['bom'] = {}
 
-    # stage = row['子工序']
-    stage = row['产生阶段']
+    stage = row['子工序']
     if stage in STAGE_P_M:
         if not m_id in STAGE_P_M[stage]:
             STAGE_P_M[stage].add(m_id)
@@ -171,9 +166,6 @@ for material in Consuming_Table:
     else:
         MATERIAL[material].bottom = (Max_Consume_Table[material][0][1][0], Max_Consume_Table[material][0][1][1])
 
-    # if material in MATERIAL:
-    #     for o_id in MATERIAL[material]:
-    #         MATERIAL[material][o_id].bottom = (Max_Consume_Table[material][0][1][0], Max_Consume_Table[material][0][1][1])
 
 #初始化设备
 # operation = {
@@ -304,54 +296,18 @@ def get_oder():
 # for item in DEVICE_cloud2:
 #     print(item['set'], item['devices'])
 
-# HT = {
-#     'm_id': set(STAGE_P_M['外护子工序']) | set(STAGE_P_M['内护子工序']),
-#     'd_id': (set(STAGE_U_D['外护子工序']) | set(STAGE_U_D['内护子工序'])) - set(STAGE_U_D['加强件子工序']),
-# }
-# CL = {
-#     'm_id': set(STAGE_P_M['二次成缆子工序']) | set(STAGE_P_M['成缆子工序']),
-#     'd_id': set(STAGE_U_D['二次成缆子工序']) | set(STAGE_U_D['成缆子工序']),
-# }
-# JQJ = {
-#     'm_id': set(STAGE_P_M['加强件子工序']) | set(STAGE_P_M['外护子工序']) | set(STAGE_P_M['内护子工序']),
-#     'd_id': set(STAGE_U_D['加强件子工序']),
-# }
-# TS = {
-#     'm_id': set(STAGE_P_M['套塑子工序']),
-#     'd_id': set(STAGE_U_D['套塑子工序']),
-# }
-# ZS = {
-#     'm_id': set(STAGE_P_M['着色子工序']),
-#     'd_id': set(STAGE_U_D['着色子工序']),
-# }
-#
-# Artificial_STAGE_INIT = {
-#     'HT': HT,
-#     'CL': CL,
-#     'JQJ': JQJ,
-#     'TS': TS,
-#     'ZS': ZS
-# }
-# # Artificial_STAGE_name = ['HT', 'CL', 'JQJ', 'TS', 'ZS']
-# Artificial_STAGE_name = ['CL', 'JQJ', 'TS', 'ZS']
 
-
-
-HT = {
-    'm_id': set(STAGE_P_M['加强件子工序']) | set(STAGE_P_M['外护子工序']) | set(STAGE_P_M['内护子工序']),
-    'd_id': (set(STAGE_U_D['外护子工序']) | set(STAGE_U_D['内护子工序']))| set(STAGE_U_D['加强件子工序']),
-}
 CL = {
     'm_id': set(STAGE_P_M['二次成缆子工序']) | set(STAGE_P_M['成缆子工序']),
     'd_id': set(STAGE_U_D['二次成缆子工序']) | set(STAGE_U_D['成缆子工序']),
 }
+JQJ = {
+    'm_id': set(STAGE_P_M['加强件子工序']) | set(STAGE_P_M['外护子工序']) | set(STAGE_P_M['内护子工序']),
+    'd_id': set(STAGE_U_D['加强件子工序']) | set(STAGE_U_D['外护子工序']) | set(STAGE_U_D['内护子工序']),
+}
 TS = {
     'm_id': set(STAGE_P_M['套塑子工序']),
     'd_id': set(STAGE_U_D['套塑子工序']),
-}
-BD = {
-    'm_id': set(STAGE_P_M['并带子工序']),
-    'd_id': set(STAGE_U_D['并带子工序']),
 }
 ZS = {
     'm_id': set(STAGE_P_M['着色子工序']),
@@ -359,14 +315,13 @@ ZS = {
 }
 
 Artificial_STAGE_INIT = {
-    'HT': HT,
     'CL': CL,
+    'JQJ': JQJ,
     'TS': TS,
-    'BD': BD,
     'ZS': ZS
 }
-# Artificial_STAGE_name = ['HT', 'CL', 'JQJ', 'TS', 'ZS']
-Artificial_STAGE_name = ['HT','CL', 'TS', 'BD','ZS']
+
+Artificial_STAGE_name = ['JQJ', 'CL', 'TS', 'ZS']
 Artificial_STAGE = {}
 for stage in Artificial_STAGE_name:
     stage_materials = {m_id: MATERIAL[m_id] for m_id in Artificial_STAGE_INIT[stage]['m_id']}
