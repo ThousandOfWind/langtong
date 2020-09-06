@@ -7,14 +7,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from MDP.modules_v5 import DECISION_INTERVAL
-from data.read import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, curriculum_order
+from data.read3 import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, curriculum_order
 from Controller.curriculum_schdule import CURs
 from data.create_map import Equipment_Relation_Map
 from Controller.agents import init_Agents
 from MemoryBuffer.Memory import MemoryBuffer
 from MDP.reward import REWARD_RUlE
 
-from scheduling_v2 import  COLORS
+from scheduling_v2 import COLORS
 
 
 parser = argparse.ArgumentParser(description="langtong")
@@ -22,7 +22,7 @@ parser.add_argument("--cuda", action="store_true", help="Use cuda?")
 parser.add_argument("--gpus", default="2", type=str, help="gpu ids (default: 2)")
 parser.add_argument("--nEpochs", type=int, default=1, help="Number of epochs to train for")
 parser.add_argument("--nEpisode", type=int, default=20, help="Number of epochs to train for")
-parser.add_argument("--agentType", default="MF2", type=str, help="agentType: random, RL, MF2")
+parser.add_argument("--agentType", default="RL", type=str, help="agentType: random, RL, MF2")
 parser.add_argument("--rewardType", default="mnp", type=str, help="rewardType")
 parser.add_argument('--pretrained', default='', type=str, help='path to pretrained model (default: none)')
 parser.add_argument("--mamorySize", type=int, default=1000, help="mamorySize")
@@ -51,7 +51,8 @@ parser.add_argument("--curriculum", action="store_true", help="Use curriculum")
 Peice = 60 * 8
 Day = 3
 # TIMELIMIT = 7 * 24 * 60
-TIMELIMIT = 3000
+# TIMELIMIT = 3000
+TIMELIMIT = 30000
 
 
 def tToClock(t):

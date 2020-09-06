@@ -3,7 +3,8 @@ import copy
 import csv
 
 
-DECISION_INTERVAL = 60
+# DECISION_INTERVAL = 60
+DECISION_INTERVAL = 120
 
 def set_demand(m_id, o_id, quantity, materials):
     mat = materials[m_id][o_id]

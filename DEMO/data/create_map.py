@@ -9,8 +9,11 @@ import pandas as pd
 #
 # craft_pd = pd.read_csv('data/sample/craft.csv', sep=',')  #  设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
 # bom_pd = pd.read_csv('data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
-craft_pd = pd.read_csv('data/sample/craft.csv', sep=',')  #  设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
-bom_pd = pd.read_csv('data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+# craft_pd = pd.read_csv('data/sample/craft.csv', sep=',')  #  设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+# bom_pd = pd.read_csv('data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+
+craft_pd = pd.read_csv('data/sample2/craft.csv', sep=',')  #  设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+bom_pd = pd.read_csv('data/sample2/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
 
 Article_to_Equipment = {}
 #物品->设备映射
