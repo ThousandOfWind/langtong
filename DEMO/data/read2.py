@@ -4,9 +4,9 @@ import numpy as np
 import random as rd
 
 device_pd = pd.read_csv('data/sample/device.csv', sep=',')  # 设备编号,班次
-craft_pd = pd.read_csv('data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
-order_pd = pd.read_csv('data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
-bom_pd = pd.read_csv('data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+craft_pd = pd.read_csv('data/sample/craft1.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+order_pd = pd.read_csv('data/sample/order1.csv', sep=',')  # 订单编号        产品编号     产品量
+bom_pd = pd.read_csv('data/sample/bom1.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
 product_pd = pd.read_csv('data/sample/products.csv', sep=',')
 
 MATERIAL = {}
@@ -43,7 +43,7 @@ for index, row in bom_pd.iterrows():
         M_INIT[m_id]['type'] = True
         M_INIT[m_id]['bom'] = {}
 
-    stage = row['子工序']
+    stage = row['产生阶段']
     if stage in STAGE_P_M.keys():
         if not m_id in STAGE_P_M[stage]:
             STAGE_P_M[stage].add(m_id)
