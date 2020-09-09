@@ -7,28 +7,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from MDP.modules_v5 import DECISION_INTERVAL
-from data.read import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, curriculum_order
+from data.read3 import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, curriculum_order
 from Controller.curriculum_schdule import CURs
 from data.create_map import Equipment_Relation_Map
 from Controller.agents import init_Agents
 from MemoryBuffer.Memory import MemoryBuffer
 from MDP.reward import REWARD_RUlE
 
-from scheduling_v2 import  COLORS
+from scheduling_v2 import COLORS
 
 
 parser = argparse.ArgumentParser(description="langtong")
 parser.add_argument("--cuda", action="store_true", help="Use cuda?")
 parser.add_argument("--gpus", default="2", type=str, help="gpu ids (default: 2)")
 parser.add_argument("--nEpochs", type=int, default=1, help="Number of epochs to train for")
-parser.add_argument("--nEpisode", type=int, default=50, help="Number of epochs to train for")
-parser.add_argument("--agentType", default="random", type=str, help="agentType: random, RL, MF2")
+parser.add_argument("--nEpisode", type=int, default=20, help="Number of epochs to train for")
+parser.add_argument("--agentType", default="RL", type=str, help="agentType: random, RL, MF2")
 parser.add_argument("--rewardType", default="mnp", type=str, help="rewardType")
 parser.add_argument('--pretrained', default='', type=str, help='path to pretrained model (default: none)')
 parser.add_argument("--mamorySize", type=int, default=1000, help="mamorySize")
-parser.add_argument("--batchSize", type=int, default=4, help="Training batch size")
+parser.add_argument("--batchSize", type=int, default=2, help="Training batch size")
 parser.add_argument("--lr", type=float, default=1e-3, help="Learning Rate. Default=0.0005")
-parser.add_argument("--etl", type=int, default=30, help="epsilon_time_length default=3000 from estart - eend")
+parser.add_argument("--etl", type=int, default=10, help="epsilon_time_length default=3000 from estart - eend")
 parser.add_argument("--estart", type=float, default=1, help="epsilon_time_length default=3000 from estart - eend")
 parser.add_argument("--eend", type=float, default=0, help="epsilon_time_length default=3000 from estart - eend")
 parser.add_argument("--gamma", type=float, default=0.99, help="GAMMA. Default=0.8")
@@ -51,7 +51,8 @@ parser.add_argument("--curriculum", action="store_true", help="Use curriculum")
 Peice = 60 * 8
 Day = 3
 # TIMELIMIT = 7 * 24 * 60
-TIMELIMIT = 3000
+# TIMELIMIT = 3000
+TIMELIMIT = 30000
 
 
 def tToClock(t):
@@ -194,19 +195,25 @@ def run(param_set):
     if not os.path.exists(result_path):
         os.makedirs(result_path)
 
+    TIME = []
+
     for e in range(param_set['n_episodes']):
         om, oc = get_oder()
 
         this_t, final_rew = episode(memoryBuffer=memoryBuffer, all_agents=all_agents, e=acummulateE + e, std_out_type=std_out_type,
                             writer=writer, reward_rule=reward_rule, delay=delay, oc=oc, task='target')
         memoryBuffer.end_trajectory()
+        TIME.append(this_t)
 
         if this_t < t_min:
             print('\tsave!')
-            gantt()
             t_min = this_t
             for d_id in DEVICE.keys():
                 DEVICE[d_id].save(result_path)
+
+        # if this_t < t_min or e+1 % 20 == 0:
+        #     gantt(result_path, e)
+
         for d_id in DEVICE.keys():
             writer.add_scalar('device-accumulateReward/' + d_id, DEVICE[d_id].accumulateReward, acummulateE + e)
             writer.add_scalar('device-accumulateRewardwithFinal/' + d_id, DEVICE[d_id].accumulateReward + final_rew, acummulateE + e)
@@ -234,23 +241,29 @@ def run(param_set):
                 for stage_id in Artificial_STAGE_name:
                     all_agents[stage_id].learn(memory=memoryBuffer, episode=e)
 
+    plt.figure()
+    numBins = 10
+    plt.hist(TIME, numBins, color='blue', alpha=0.8, rwidth=0.9)
+    plt.show()
 
-def gantt():
-    plt.figure(figsize=(50, 50),dpi=300)
+
+def gantt(path,e):
+    plt.figure(figsize=(50, 50))
     DEVICE_ID = []
     for s in Artificial_STAGE_name:
         for device in Artificial_STAGE[s].devices:
             DEVICE_ID.append(device.id)
+            # print(device.id,device.prod_list)
             for production in device.prod_list:
                 m_id = production[0]
                 o_id = production[1]
                 start_time = production[2]
                 production_time = production[3]
                 plt.barh(device.id, production_time, left=start_time, color=rgb_to_hex(COLORS[m_id][o_id]))
-                plt.text(start_time, device.id, '%s\n%s' % (m_id, o_id), fontsize=1)
-    plt.tick_params(labelsize=1)
+                plt.text(start_time, device.id, '%s\n%s' % (m_id, o_id))
+    plt.tick_params()
     plt.yticks(DEVICE_ID)
-    plt.show()
+    plt.savefig(path +'gan_' + str(e) + '.png')
     return
 
 def rgb_to_hex(color):
@@ -318,7 +331,7 @@ if __name__ == '__main__':
         strC = ''
 
 
-    path = '/m3/' + param_set['agentType'] + strC + \
+    path = '/' + param_set['agentType'] + strC + \
            '/etl'+str(param_set['time_length'])+'-'+ str(param_set['epsilon_start']) + str(param_set['epsilon_end']) + \
            '/m' + str(param_set['mamory_size'])[:-3] + 'k-bs' + str(param_set['batch_size']) + '*-tui' + str(param_set['target_update_interval']) + \
            '/g' + str(param_set['gamma'])[2:] + '-REW' + param_set['reward_Type'] + '-delay'+ str(param_set['delay'])+  \

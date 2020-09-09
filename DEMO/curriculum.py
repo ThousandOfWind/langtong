@@ -36,7 +36,7 @@ parser.add_argument("--curriculumStyle", type=str, default='base', help="level o
 parser.add_argument("--curriculumTL", type=int, default=200, help="timelength of each curriculum")
 parser.add_argument("--curriculumEnd", type=str, default='fix', help="fix / loss")
 parser.add_argument("--curriculumMemory", type=str, default='private', help="private / share")
-parser.add_argument("--obStyle", type=str, default='primitive', help="primitive, concat, lstm")
+parser.add_argument("--obStyle", type=str, default='lstm', help="primitive, concat, lstm")
 parser.add_argument("--obId", action="store_true", help="Use agentID?")
 
 

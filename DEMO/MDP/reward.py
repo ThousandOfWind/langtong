@@ -108,6 +108,20 @@ SE2_REWARD_RUlE = {
     'exceed-time': 0
 }
 
+PC_REWARD_RUlE = {
+    'step': -0.2,
+    'meet_need': 0,
+    'wait': 0,
+    'changeCraft': -0.01,
+    'success': 0,
+    'reduce_time': 0,
+    'fail': 0,
+    'fail-order': 0,
+    'remain-order': 0,
+    'exceed-time': 0
+}
+
+
 
 REWARD_RUlE = {
     'base': BASE_REWARD_RUlE,
@@ -118,5 +132,6 @@ REWARD_RUlE = {
     'se': SE_REWARD_RUlE,
     'se2': SE2_REWARD_RUlE,
     'positive': POSITIVE_REWARD_RUlE,
+    'pc': PC_REWARD_RUlE,
 }
 

@@ -5,12 +5,11 @@ import torch
 import random
 import numpy as np
 
-from MDP.modules_v3 import DECISION_INTERVAL
-from data.read import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, generate_virtual_order
+from MDP.modules_v5 import DECISION_INTERVAL
+from data.read3 import MATERIAL, STAGE, STAGE_name, Artificial_STAGE_name, Artificial_STAGE, DEVICE, get_oder, generate_virtual_order
 from Controller.agents import init_Agents
 from MemoryBuffer.Memory import MemoryBuffer
 from MDP.reward import REWARD_RUlE
-
 
 parser = argparse.ArgumentParser(description="langtong")
 parser.add_argument("--cuda", action="store_true", help="Use cuda?")
@@ -40,7 +39,9 @@ parser.add_argument("--obStyle", type=str, default='primitive', help="primitive,
 Peice = 60 * 8
 Day = 3
 # TIMELIMIT = 7 * 24 * 60
-TIMELIMIT = 3000
+# TIMELIMIT = 3000
+TIMELIMIT = 30000
+
 
 def tToClock(t):
     p = t // Peice

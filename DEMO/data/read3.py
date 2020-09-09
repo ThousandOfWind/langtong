@@ -9,11 +9,15 @@ import random as rd
 
 std_out = False
 
-device_pd = pd.read_csv('data/sample/device.csv', sep=',')  # 设备编号,班次
-craft_pd = pd.read_csv('data/sample/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
-order_pd = pd.read_csv('data/sample/order.csv', sep=',')  # 订单编号        产品编号     产品量
-bom_pd = pd.read_csv('data/sample/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
+device_pd = pd.read_csv('data/sample2/device.csv', sep=',')  # 设备编号,班次
+craft_pd = pd.read_csv('data/sample2/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+order_pd = pd.read_csv('data/sample2/order.csv', sep=',')  # 订单编号        产品编号     产品量
+bom_pd = pd.read_csv('data/sample2/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
 
+# device_pd = pd.read_csv('sample2/device.csv', sep=',')  # 设备编号,班次
+# craft_pd = pd.read_csv('sample2/craft.csv', sep=',')  # 设备编号,物料编码,产量,换线时间,工作中心编码,换线时间,连续生产类别编码,销售订单号
+# order_pd = pd.read_csv('sample2/order.csv', sep=',')  # 订单编号        产品编号     产品量
+# bom_pd = pd.read_csv('sample2/bom.csv', sep=',')  # 销售订单行号 母件编码 子件编码 定额 单位 采购 半成品 成品 子工序
 
 
 MATERIAL = {}
@@ -33,23 +37,23 @@ Max_Consume_Table = {}
 
 #初始化物料
 M_INIT = {}
-M_ALL_C = set()
 for index, row in bom_pd.iterrows():
     c_id = str(row['子件编码'])
     # c = row['采购'] == '是'
-    M_ALL_C.add(c_id)
-    # if c and (not c_id in M_INIT):
-    #     M_INIT[c_id] = {}
-    #     M_INIT[c_id]['type'] = False
-    #     M_INIT[c_id]['bom'] = {}
+    if (not c_id in M_INIT):
+        M_INIT[c_id] = {}
+        M_INIT[c_id]['type'] = False
+        M_INIT[c_id]['bom'] = {}
 
     m_id = str(row['母件编码'])
     if not m_id in M_INIT.keys():
         M_INIT[m_id] = {}
         M_INIT[m_id]['type'] = True
         M_INIT[m_id]['bom'] = {}
+    M_INIT[m_id]['type'] = True
 
-    stage = row['子工序']
+    # stage = row['子工序']
+    stage = row['产生阶段']
     if stage in STAGE_P_M:
         if not m_id in STAGE_P_M[stage]:
             STAGE_P_M[stage].add(m_id)
@@ -63,10 +67,7 @@ for index, row in bom_pd.iterrows():
     else:
         M_INIT[m_id]['bom'][o_id] = [[str(row['子件编码']), row['定额']], ]
 
-for c in M_ALL_C - M_INIT.keys():
-    M_INIT[c] = {}
-    M_INIT[c]['type'] = False
-    M_INIT[c]['bom'] = {}
+
 for m_id in M_INIT:
     if M_INIT[m_id]['type']:
         MATERIAL[m_id] = {}
@@ -97,6 +98,11 @@ for index, row in craft_pd.iterrows():
     # stage = row['工作中心编码']
     if m_id in M_T_STAGE:
         stage = M_T_STAGE[m_id]
+        if type(MATERIAL[m_id]) != dict:
+            print(m_id)
+            print(MATERIAL[m_id])
+            print(M_T_STAGE[m_id])
+            print(M_INIT[m_id])
 
         craft = Craft(d_id=d_id, m_id=m_id, target=(MATERIAL[m_id], p), changeTime=cT)
 
@@ -166,6 +172,9 @@ for material in Consuming_Table:
     else:
         MATERIAL[material].bottom = (Max_Consume_Table[material][0][1][0], Max_Consume_Table[material][0][1][1])
 
+    # if material in MATERIAL:
+    #     for o_id in MATERIAL[material]:
+    #         MATERIAL[material][o_id].bottom = (Max_Consume_Table[material][0][1][0], Max_Consume_Table[material][0][1][1])
 
 #初始化设备
 # operation = {
@@ -198,14 +207,18 @@ for s_id in STAGE:
 
 #初始化订单
 
+
 def get_oder():
 
     orderML = {}
     for index, row in order_pd.iterrows():
-        o_id = row['订单编号']
-        m_id = str(row['产品编号'])
-        quatity = row['产品量']
-        orderML[o_id] = Material(id='order', type=True, bom=[[m_id, quatity],])
+        o_id = row['销售订单行号']
+        m_id = str(row['产品编码'])
+        quatity = row['数量']
+        if o_id in orderML:
+            orderML[o_id].bom[0][1] += quatity
+        else:
+            orderML[o_id] = Material(id='order', type=True, bom=[[m_id, quatity],])
 
     order_craft = Craft(d_id='order', m_id='order', target=(orderML, 1), changeTime=0)
     return orderML, order_craft
@@ -296,18 +309,54 @@ def get_oder():
 # for item in DEVICE_cloud2:
 #     print(item['set'], item['devices'])
 
+# HT = {
+#     'm_id': set(STAGE_P_M['外护子工序']) | set(STAGE_P_M['内护子工序']),
+#     'd_id': (set(STAGE_U_D['外护子工序']) | set(STAGE_U_D['内护子工序'])) - set(STAGE_U_D['加强件子工序']),
+# }
+# CL = {
+#     'm_id': set(STAGE_P_M['二次成缆子工序']) | set(STAGE_P_M['成缆子工序']),
+#     'd_id': set(STAGE_U_D['二次成缆子工序']) | set(STAGE_U_D['成缆子工序']),
+# }
+# JQJ = {
+#     'm_id': set(STAGE_P_M['加强件子工序']) | set(STAGE_P_M['外护子工序']) | set(STAGE_P_M['内护子工序']),
+#     'd_id': set(STAGE_U_D['加强件子工序']),
+# }
+# TS = {
+#     'm_id': set(STAGE_P_M['套塑子工序']),
+#     'd_id': set(STAGE_U_D['套塑子工序']),
+# }
+# ZS = {
+#     'm_id': set(STAGE_P_M['着色子工序']),
+#     'd_id': set(STAGE_U_D['着色子工序']),
+# }
+#
+# Artificial_STAGE_INIT = {
+#     'HT': HT,
+#     'CL': CL,
+#     'JQJ': JQJ,
+#     'TS': TS,
+#     'ZS': ZS
+# }
+# # Artificial_STAGE_name = ['HT', 'CL', 'JQJ', 'TS', 'ZS']
+# Artificial_STAGE_name = ['CL', 'JQJ', 'TS', 'ZS']
 
+
+
+HT = {
+    'm_id': set(STAGE_P_M['加强件子工序']) | set(STAGE_P_M['外护子工序']) | set(STAGE_P_M['内护子工序']),
+    'd_id': (set(STAGE_U_D['外护子工序']) | set(STAGE_U_D['内护子工序']))| set(STAGE_U_D['加强件子工序']),
+}
 CL = {
     'm_id': set(STAGE_P_M['二次成缆子工序']) | set(STAGE_P_M['成缆子工序']),
     'd_id': set(STAGE_U_D['二次成缆子工序']) | set(STAGE_U_D['成缆子工序']),
 }
-JQJ = {
-    'm_id': set(STAGE_P_M['加强件子工序']) | set(STAGE_P_M['外护子工序']) | set(STAGE_P_M['内护子工序']),
-    'd_id': set(STAGE_U_D['加强件子工序']) | set(STAGE_U_D['外护子工序']) | set(STAGE_U_D['内护子工序']),
-}
 TS = {
     'm_id': set(STAGE_P_M['套塑子工序']),
     'd_id': set(STAGE_U_D['套塑子工序']),
+}
+BD = {
+    'm_id': set(STAGE_P_M['并带子工序']),
+    'd_id': set(STAGE_U_D['并带子工序']),
 }
 ZS = {
     'm_id': set(STAGE_P_M['着色子工序']),
@@ -315,13 +364,14 @@ ZS = {
 }
 
 Artificial_STAGE_INIT = {
+    'HT': HT,
     'CL': CL,
-    'JQJ': JQJ,
     'TS': TS,
+    'BD': BD,
     'ZS': ZS
 }
-
-Artificial_STAGE_name = ['JQJ', 'CL', 'TS', 'ZS']
+# Artificial_STAGE_name = ['HT', 'CL', 'JQJ', 'TS', 'ZS']
+Artificial_STAGE_name = ['HT','CL', 'TS', 'BD','ZS']
 Artificial_STAGE = {}
 for stage in Artificial_STAGE_name:
     stage_materials = {m_id: MATERIAL[m_id] for m_id in Artificial_STAGE_INIT[stage]['m_id']}
