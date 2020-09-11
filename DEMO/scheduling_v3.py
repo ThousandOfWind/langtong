@@ -1,10 +1,10 @@
-from data.read2 import MATERIAL, DEVICE, get_oder, M_T_STAGE
+from data.read4 import MATERIAL, DEVICE, get_oder, M_T_STAGE
 import copy
 import sys
 import matplotlib.pyplot as plt
 import csv
 
-sys.setrecursionlimit(10000)
+sys.setrecursionlimit(100000)
 DEMAND = {}  # 需求
 REMAIN = {}  # 剩余
 SCHEDULED = {}  # 已安排的生产
@@ -31,28 +31,13 @@ def gantt(plan):
             o_id = production[1]
             start_time = production[2]
             production_time = production[3]
-            plt.barh(DEVICE_ID[i], production_time, left=start_time, color=rgb_to_hex(COLORS[m_id][o_id]))
+            plt.barh(DEVICE_ID[i], production_time, left=start_time)
             plt.text(start_time, DEVICE_ID[i], '%s\n%s'%(m_id, o_id))
     plt.yticks(DEVICE_ID)
     plt.show()
     return
 
 
-def rgb_to_hex(color):
-    strn = '#'
-    for rgb in color:
-        strn += str(hex(rgb))[-2:].replace('x', '0').upper()
-    return strn
-
-
-def color_reduce(color):
-    ret = []
-    for rgb in color:
-        if rgb <= 215:
-            ret.append(rgb + 40)
-        else:
-            ret.append(rgb)
-    return ret
 
 
 def set_demand(m_id, o_id, quantity):
@@ -63,7 +48,6 @@ def set_demand(m_id, o_id, quantity):
             if type(MATERIAL[source]) == dict:
                 if source not in COLORS.keys():
                     COLORS[source] = {}
-                COLORS[source][o_id] = color_reduce(COLORS[m_id][o_id])
                 set_demand(source, o_id, quantity * amount)
             else:
                 DEMAND[source] += quantity * amount
@@ -271,7 +255,6 @@ c = 0
 for o_id, order_mat in orderML.items():
     if order_mat.bom[0][0] not in COLORS.keys():
         COLORS[order_mat.bom[0][0]] = {}
-    COLORS[order_mat.bom[0][0]][o_id] = COLOR_TYPES[c]
     c += 1
     set_demand(order_mat.bom[0][0], o_id, order_mat.bom[0][1])
 
